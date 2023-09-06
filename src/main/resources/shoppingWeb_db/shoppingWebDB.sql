@@ -43,15 +43,7 @@ CONSTRAINT product_fk FOREIGN KEY (product_id) REFERENCES products(product_id),
 CONSTRAINT brand_fk FOREIGN KEY (brand_id) REFERENCES brands(brand_id)
 );
 
-CREATE TABLE IF NOT EXISTS purchase(
-purchase_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-purchase_date DATETIME NOT NULL,
-user_id INT NOT NULL,
-product_id INT NOT NULL,
-brand_id INT NOT NULL,
-FOREIGN KEY (user_id) REFERENCES user(user_id),
-FOREIGN KEY (product_id) REFERENCES products(product_id),
-FOREIGN KEY (brand_id) REFERENCES brands(brand_id));
+
 
 
 
