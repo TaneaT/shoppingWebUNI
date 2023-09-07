@@ -73,8 +73,7 @@ public class UserDAOImpl implements UserDAO {
     try (Connection conn = JdbcConnection.getConnection();
         PreparedStatement deleteUser = conn.prepareStatement(sql)) {
 
-
-        deleteUser.setInt(1, id);
+      deleteUser.setInt(1, id);
 
       deleteUser.executeUpdate();
 
