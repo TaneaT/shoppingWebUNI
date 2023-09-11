@@ -4,6 +4,8 @@ import com.practiceUni.shoppingWeb.domain.Product;
 import com.practiceUni.shoppingWeb.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/product")
 public class ProductController {
@@ -38,6 +40,11 @@ public class ProductController {
     @GetMapping("/find/name/{name}")
     public Product findProductByName(@PathVariable String name){
         return productService.findProductByName(name);
+    }
+
+    @GetMapping("/find/all")
+    public List<Product> getAllProducts(){
+        return productService.getAllProducts();
     }
 
 }

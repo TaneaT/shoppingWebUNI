@@ -2,12 +2,16 @@ package com.practiceUni.shoppingWeb.dao.impl;
 
 import com.practiceUni.shoppingWeb.JdbcConnection;
 import com.practiceUni.shoppingWeb.dao.ProductDAO;
+import com.practiceUni.shoppingWeb.domain.Brand;
 import com.practiceUni.shoppingWeb.domain.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {
@@ -84,7 +88,8 @@ public class ProductDAOImpl implements ProductDAO {
 
   @Override
   public Product findById(Integer id) {
-    String sql = "SELECT * FROM products WHERE product_id = ?";
+
+    String sql = "SELECT * FROM products WHERE products.product_id = ?";
     Product product = new Product();
 
     try (Connection conn = JdbcConnection.getConnection();
@@ -117,7 +122,8 @@ public class ProductDAOImpl implements ProductDAO {
 
   @Override
   public Product findByName(String name) {
-    String sql = "SELECT * FROM products WHERE product_name = ?";
+    String sql = "SELECT * FROM products WHERE products.product_name = ?";
+
     Product product = new Product();
 
     try (Connection conn = JdbcConnection.getConnection();
@@ -146,5 +152,33 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     return product;
+  }
+
+  @Override
+  public List<Product> getAllProducts() {
+    String sql = "SELECT * FROM products";
+
+    List<Product> products = new ArrayList<>();
+
+    try (Connection conn = JdbcConnection.getConnection();
+        PreparedStatement allProducts = conn.prepareStatement(sql)) {
+
+      ResultSet resultSet = allProducts.executeQuery();
+
+      while (resultSet.next()) {
+        Integer Id = resultSet.getInt("product_id");
+        String productName = resultSet.getString("product_name");
+        String size = resultSet.getString("product_size");
+        String color = resultSet.getString("product_color");
+        Integer quantity = resultSet.getInt("product_quantity");
+
+        products.add(new Product(Id, productName, size, color, quantity));
+      }
+
+    } catch (SQLException e) {
+      LOGGER.error("Failed to get all products" + e);
+    }
+
+    return products;
   }
 }

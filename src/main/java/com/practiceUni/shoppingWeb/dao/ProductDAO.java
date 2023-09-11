@@ -2,6 +2,8 @@ package com.practiceUni.shoppingWeb.dao;
 
 import com.practiceUni.shoppingWeb.domain.Product;
 
+import java.util.List;
+
 public interface ProductDAO extends DAO<Product> {
 
   Product create(Product product);
@@ -13,4 +15,6 @@ public interface ProductDAO extends DAO<Product> {
   Product findById(Integer id);
 
   Product findByName(String name);
+
+  List<Product> getAllProducts();
 }

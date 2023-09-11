@@ -10,6 +10,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -118,4 +121,30 @@ class ProductServiceImplTest {
         assertEquals(foundProduct,product);
 
       }
+
+      @Test
+    void shouldGetAllProducts(){
+          Product product1 = new Product(1,"Name", "size", "color", 1);
+          Product product2 = new Product(2,"Name1", "size1", "color1", 2);
+
+          Mockito.when(productDAOImpl.create(product1)).thenReturn(product1);
+          Mockito.when(productDAOImpl.create(product2)).thenReturn(product2);
+          assertNotNull(productServiceImpl.createProduct(product1));
+          assertNotNull(productServiceImpl.createProduct(product2));
+
+          List<Product> productList = new ArrayList<>();
+
+        productList.add(product1);
+        productList.add(product2);
+
+        assertEquals(productList.size(),2);
+
+        Mockito.when(productDAOImpl.getAllProducts()).thenReturn(productList);
+        List<Product> testList = productServiceImpl.getAllProducts();
+
+        assertNotNull(testList);
+        assertEquals(testList,productList);
+
+      }
+
 }
