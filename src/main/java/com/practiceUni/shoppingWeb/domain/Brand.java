@@ -55,6 +55,13 @@ public class Brand {
     this.productColor = productColor;
   }
 
+  public Brand(Integer id, String name, String email,Integer productId) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.productId = productId;
+  }
+
   public Brand() {}
 
   public Integer getId() {
