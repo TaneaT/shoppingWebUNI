@@ -43,13 +43,23 @@ CONSTRAINT product_fk FOREIGN KEY (product_id) REFERENCES products(product_id),
 CONSTRAINT brand_fk FOREIGN KEY (brand_id) REFERENCES brands(brand_id)
 );
 
+SELECT * FROM brands_product;
 
 
+DELETE FROM products;
+DELETE FROM brands_product;
+DELETE FROM brands;
 
 
+INSERT INTO products(product_name,product_size,product_color,product_quantity) VALUES ("name","size","color",10);
 
+SELECT brands.brand_id, brands.brand_name, brands.brand_email,products.product_id AS product_id, products.product_name, products.product_size, products.product_color FROM brands JOIN brands_product ON brands_product.brand_id = brands.brand_id JOIN products ON brands_product.product_id = products.product_id WHERE brands.brand_id = 1;
 
+SELECT * FROM brands;
+SELECT * FROM products;
+SELECT * FROM brands_product;
 
+DELETE FROM products;
 
-
-
+SELECT products.product_id, products.product_name,products.product_size,products.product_color,products.product_quantity,brands.brand_name AS brand_name FROM products 
+JOIN brands_product ON brands_product.product_id = products.product_id JOIN brands ON brands_product.brand_id = brands.brand_id WHERE products.product_name = 28;

@@ -96,10 +96,10 @@ public class BrandDAOImpl implements BrandDAO {
     String sql = "SELECT brands.brand_id," +
             "brands.brand_name," +
             "brands.brand_email," +
-            "products.product_id AS product_id," +
-            "products.product_name AS product_name," +
-            "products.product_size AS product_size," +
-            "products.product_color AS product_color" +
+            "products.product_id ," +
+            "products.product_name ," +
+            "products.product_size ," +
+            "products.product_color " +
             " FROM brands " +
             "JOIN brands_product " +
             "ON brands_product.brand_id = brands.brand_id " +
@@ -143,7 +143,7 @@ public class BrandDAOImpl implements BrandDAO {
      String sql = "SELECT brands.brand_id," +
             "brands.brand_name," +
             "brands.brand_email," +
-            "products.product_id AS product_id," +
+            "products.product_id ," +
             "products.product_name," +
             "products.product_size," +
             "products.product_color" +
