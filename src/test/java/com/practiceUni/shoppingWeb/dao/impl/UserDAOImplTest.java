@@ -1,10 +1,16 @@
 package com.practiceUni.shoppingWeb.dao.impl;
 
+import com.practiceUni.shoppingWeb.JdbcConnection;
 import com.practiceUni.shoppingWeb.dao.UserDAO;
 import com.practiceUni.shoppingWeb.domain.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +21,21 @@ class UserDAOImplTest {
 
   private User getTestUser() {
     return new User("firstName", "lastName", "login", "password", "email", "address");
+  }
+
+  @AfterEach
+  void tearDown() {
+    String userSql = "DELETE FROM user";
+
+
+    try (Connection conn = JdbcConnection.getConnection();
+         PreparedStatement user = conn.prepareStatement(userSql)){
+
+      user.executeUpdate();
+
+    } catch (SQLException e) {
+      e.getStackTrace();
+    }
   }
 
   @Test

@@ -1,14 +1,20 @@
 package com.practiceUni.shoppingWeb.dao.impl;
 
+import com.practiceUni.shoppingWeb.JdbcConnection;
 import com.practiceUni.shoppingWeb.dao.BrandDAO;
 import com.practiceUni.shoppingWeb.dao.ProductDAO;
 import com.practiceUni.shoppingWeb.domain.Brand;
 import com.practiceUni.shoppingWeb.domain.Product;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +27,22 @@ class BrandDAOImplTest {
     @Autowired
     private ProductDAO productDAO;
 
+    @AfterEach
+    void tearDown() {
+        String brandSql = "DELETE FROM brands";
+        String brandProductSql = "DELETE FROM brands_product";
 
+        try (Connection conn = JdbcConnection.getConnection();
+             PreparedStatement brand = conn.prepareStatement(brandSql);
+             PreparedStatement brandProduct = conn.prepareStatement(brandProductSql)) {
+
+            brandProduct.executeUpdate();
+            brand.executeUpdate();
+
+        } catch (SQLException e) {
+            e.getStackTrace();
+        }
+    }
 
     @Test
     void shouldCreateBrand() {
@@ -124,9 +145,12 @@ class BrandDAOImplTest {
         Brand brand =  new Brand("name", "email", product.getId());
         assertNotNull(brandDAO.create(brand));
 
-        List<Brand> brands = brandDAO.getAll();
+        List<Brand> brands = new ArrayList<>();
+        brands.add(brand);
         assertNotNull(brands);
-        assertEquals(brands.size(),1);
+
+        List<Brand> testList = brandDAO.getAll();
+        assertEquals(testList.size(),brands.size());
 
         assertTrue(productDAO.deleteById(product.getId()));
         assertTrue(brandDAO.deleteById(brand.getId()));

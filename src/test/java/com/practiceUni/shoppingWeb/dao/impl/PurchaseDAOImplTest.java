@@ -25,20 +25,22 @@ class PurchaseDAOImplTest {
   @Autowired private PurchaseDAO purchaseDAO;
 
   private Purchase getTestPurchase() {
-    return new Purchase(Timestamp.valueOf(LocalDateTime.now()), 32, 141, 39);
+    return new Purchase(Timestamp.valueOf(LocalDateTime.now()), 80, 260, 90);
   }
 
   @AfterEach
   void tearDown() {
-    String purchaseSql = "DELETE FROM purchase";
-    String userPurchaseSql = "DELETE FROM user_purchase";
+    String sql = "DELETE FROM purchase";
+    String sql1 = "DELETE FROM user_purchase";
+
+
 
     try (Connection conn = JdbcConnection.getConnection();
-        PreparedStatement purchased = conn.prepareStatement(purchaseSql);
-        PreparedStatement userPurchase = conn.prepareStatement(userPurchaseSql)) {
-
-      userPurchase.executeUpdate();
-      purchased.executeUpdate();
+         PreparedStatement purchase = conn.prepareStatement(sql);
+         PreparedStatement userPurchase = conn.prepareStatement(sql1))
+    {
+userPurchase.executeUpdate();
+      purchase.executeUpdate();
 
     } catch (SQLException e) {
       e.getStackTrace();

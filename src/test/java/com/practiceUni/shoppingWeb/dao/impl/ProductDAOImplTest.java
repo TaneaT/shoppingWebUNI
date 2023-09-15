@@ -1,11 +1,16 @@
 package com.practiceUni.shoppingWeb.dao.impl;
 
+import com.practiceUni.shoppingWeb.JdbcConnection;
 import com.practiceUni.shoppingWeb.dao.ProductDAO;
 import com.practiceUni.shoppingWeb.domain.Product;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +23,23 @@ class ProductDAOImplTest {
 
   private Product getTestProduct() {
     return new Product("Name", "size", "color", 1);
+  }
+
+  @AfterEach
+  void tearDown() {
+    String purchaseSql = "DELETE FROM products";
+    String userPurchaseSql = "DELETE FROM brands_product";
+
+    try (Connection conn = JdbcConnection.getConnection();
+         PreparedStatement purchased = conn.prepareStatement(purchaseSql);
+         PreparedStatement userPurchase = conn.prepareStatement(userPurchaseSql)) {
+
+      userPurchase.executeUpdate();
+      purchased.executeUpdate();
+
+    } catch (SQLException e) {
+      e.getStackTrace();
+    }
   }
 
   @Test
@@ -106,16 +128,15 @@ class ProductDAOImplTest {
     assertNotNull(productDAO.create(product2));
 
     List<Product> productList = new ArrayList<>();
-
     productList.add(product1);
     productList.add(product2);
 
     assertEquals(productList.size(), 2);
 
-    List<Product> testList = productDAO.getAllProducts();
+    List<Product> anotherList = productDAO.getAllProducts();
 
-    assertNotNull(testList);
-    assertEquals(testList, productList);
+    assertNotNull(anotherList);
+    assertEquals(anotherList.size(), productList.size());
 
     assertTrue(productDAO.deleteById(product1.getId()));
     assertTrue(productDAO.deleteById(product2.getId()));

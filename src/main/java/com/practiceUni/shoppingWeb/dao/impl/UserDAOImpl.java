@@ -55,7 +55,11 @@ public class UserDAOImpl implements UserDAO {
         PreparedStatement updateUser = conn.prepareStatement(sql)) {
 
       updateUser.setString(1, user.getAddress());
+      if(user.getId() != null){
       updateUser.setInt(2, user.getId());
+      } else {
+        return null;
+      }
 
       updateUser.executeUpdate();
 

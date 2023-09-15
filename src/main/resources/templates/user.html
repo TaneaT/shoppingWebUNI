@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>User Page</title>
+</head>
+<body>
+<h1>Welcome to the User Page</h1>
+
+<a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
+<a th:href="@{/signin}" class="btn btn-primary">Sign In</a>
+
+<h2>Categories:</h2>
+<ul>
+  <li><a th:href="@{/api/product/find/all}">All Products</a></li>
+  <li><a th:href="@{/api/product/find/name/men}">Men</a></li>
+  <li><a th:href="@{/api/product/find/name/women}">Women</a></li>
+  <li><a th:href="@{/api/product/find/name/kids}">Kids</a></li>
+</ul>
+</body>
+</html>

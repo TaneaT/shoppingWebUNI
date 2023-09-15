@@ -1,7 +1,8 @@
 package com.practiceUni.shoppingWeb.controller;
 
+import com.practiceUni.shoppingWeb.controller.UserController;
 import com.practiceUni.shoppingWeb.domain.User;
-import com.practiceUni.shoppingWeb.service.impl.UserServiceImpl;
+import com.practiceUni.shoppingWeb.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,115 +10,144 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import static org.mockito.ArgumentMatchers.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
     @Mock
-    private UserServiceImpl userServiceImpl;
+    private UserService userService;
+
+    @Mock
+    private BindingResult bindingResult;
+
+    @Mock
+    private Model model;
 
     private UserController userController;
 
     @BeforeEach
     void setUp() {
-        userController = new UserController(userServiceImpl);
-      }
-
-      private User getTestUser(){
-        return new User(1,"firstName", "lastName", "login", "password", "email", "address");
-      }
+        userController = new UserController(userService);
+    }
 
     @Test
-        void shouldCreateUser() {
-        User user = getTestUser();
+    void shouldShowSignUpForm() {
+        String result = userController.showSignUpForm(new User());
 
-        Mockito.when(userServiceImpl.createUser(user)).thenReturn(user);
-        assertNotNull(userController.createUser(user));
-
-        Mockito.when(userServiceImpl.findUserById(user.getId())).thenReturn(user);
-        User testUser = userController.findUserById(user.getId());
-        assertNotNull(testUser);
-        assertEquals(testUser,user);
-
-      }
+        assertEquals("add-user", result);
+    }
 
     @Test
-    void shouldUpdateUser() {
-        User user = getTestUser();
+    void shouldAddUserWithValidData() {
+        User user = new User();
 
-        Mockito.when(userServiceImpl.createUser(user)).thenReturn(user);
-        assertNotNull(userController.createUser(user));
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 
-        user.setAddress("New Address");
+        String result = userController.addUser(user, bindingResult, model);
 
-        Mockito.when(userServiceImpl.updateUser(user)).thenReturn(user);
-        User updatedUser = userController.updateUser(user);
-        assertNotNull(updatedUser);
-
-        Mockito.when(userServiceImpl.findUserById(user.getId())).thenReturn(user);
-        User testUser =userController.findUserById(user.getId());
-        assertNotNull(testUser);
-        assertEquals(testUser,updatedUser);
-
-      }
-
-      @Test
-      void shouldCreateUserIfNotFound(){
-        User user = new User("firstName", "lastName", "login", "password", "email", "address");
-
-        Mockito.when(userServiceImpl.findUserById(user.getId())).thenReturn(null);
-        assertNull(userController.findUserById(user.getId()));
-
-        Mockito.when(userServiceImpl.createUser(user)).thenReturn(user);
-        user.setId(1);
-        assertNotNull(userController.createUser(user));
-
-        Mockito.when(userServiceImpl.findUserById(user.getId())).thenReturn(user);
-        User testUser = userController.findUserById(user.getId());
-        assertNotNull(testUser);
-        assertEquals(testUser,user);
-
-      }
+        assertEquals("redirect:/index", result);
+        Mockito.verify(userService, Mockito.times(1)).createUser(user);
+    }
 
     @Test
-    void shouldDeleteUserById() {
-        User user = getTestUser();
+    void shouldNotAddUserWithInvalidData() {
+        User user = new User();
 
-        Mockito.when(userServiceImpl.createUser(user)).thenReturn(user);
-        assertNotNull(userController.createUser(user));
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
 
-        Mockito.when(userServiceImpl.deleteUserById(user.getId())).thenReturn(true);
-        assertTrue(userController.deleteUserById(user.getId()));
-  }
+        String result = userController.addUser(user, bindingResult, model);
+
+        assertEquals("add-user", result);
+        Mockito.verify(userService, Mockito.never()).createUser(any(User.class));
+    }
 
     @Test
-    void findUserById() {
-        User user = getTestUser();
+    void shouldShowUpdateForm() {
+        Integer userId = 1;
 
-        Mockito.when(userServiceImpl.createUser(user)).thenReturn(user);
-        assertNotNull(userController.createUser(user));
+        User user = new User();
 
-        Mockito.when(userServiceImpl.findUserById(user.getId())).thenReturn(user);
-        User foundUser = userController.findUserById(user.getId());
+        Mockito.when(userService.findUserById(userId)).thenReturn(user);
+
+        String result = userController.showUpdateForm(userId, model);
+
+        assertEquals("update-user", result);
+        Mockito.verify(model, Mockito.times(1)).addAttribute("user", user);
+    }
+
+    @Test
+    void shouldUpdateUserWithValidData() {
+        Integer userId = 1;
+
+        User user = new User();
+
+        Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+
+        String result = userController.updateUser(userId, user, bindingResult, model);
+
+        assertEquals("redirect:/index", result);
+        Mockito.verify(userService, Mockito.times(1)).createUser(user);
+    }
+
+    @Test
+    void shouldNotUpdateUserWithInvalidData() {
+        Integer userId = 1;
+
+        User user = new User();
+
+        Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+
+        String result = userController.updateUser(userId, user, bindingResult, model);
+
+        assertEquals("update-user", result);
+        Mockito.verify(userService, Mockito.never()).createUser(any(User.class));
+    }
+
+    @Test
+    void shouldDeleteUser() {
+        Integer userId = 1;
+
+        User user = new User();
+
+        Mockito.when(userService.findUserById(userId)).thenReturn(user);
+        Mockito.when(userService.deleteUserById(userId)).thenReturn(true);
+
+        String result = userController.deleteUser(userId, model);
+
+        assertEquals("redirect:/index", result);
+        Mockito.verify(userService, Mockito.times(1)).deleteUserById(userId);
+    }
+
+    @Test
+    void shouldFindUserById() {
+        Integer userId = 1;
+
+        User user = new User();
+
+        Mockito.when(userService.findUserById(userId)).thenReturn(user);
+
+        User foundUser = userController.findUserById(userId);
+
         assertNotNull(foundUser);
-        assertEquals(foundUser,user);
-
-      }
+        assertEquals(user, foundUser);
+    }
 
     @Test
-    void findUserByLogin() {
-        User user = getTestUser();
+    void shouldFindUserByLogin() {
+        String login = "testLogin";
 
-        Mockito.when(userServiceImpl.createUser(user)).thenReturn(user);
-        assertNotNull(userController.createUser(user));
+        User user = new User();
 
-        Mockito.when(userServiceImpl.findUserByLogin(user.getLogin())).thenReturn(user);
-        User foundUser = userController.findUserByLogin(user.getLogin());
+        Mockito.when(userService.findUserByLogin(login)).thenReturn(user);
+
+        User foundUser = userController.findUserByLogin(login);
+
         assertNotNull(foundUser);
-        assertEquals(foundUser,user);
-
-      }
+        assertEquals(user, foundUser);
+    }
 }
