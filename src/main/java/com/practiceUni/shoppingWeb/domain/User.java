@@ -50,6 +50,15 @@ public class User {
     this.address = address;
   }
 
+  public User(Integer id, String firstName, String lastName, String login, String email, String address) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.login = login;
+    this.email = email;
+    this.address = address;
+  }
+
   public User() {}
 
   public Integer getId() {

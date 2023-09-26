@@ -8,22 +8,27 @@ public class Product {
 
   private String name;
 
+  private String category;
+
   private String size;
 
   private String color;
 
   private Integer quantity;
 
-  public Product(Integer id, String name, String size, String color, Integer quantity) {
+  public Product(
+      Integer id, String name, String category, String size, String color, Integer quantity) {
     this.id = id;
     this.name = name;
+    this.category = category;
     this.size = size;
     this.color = color;
     this.quantity = quantity;
   }
 
-  public Product(String name, String size, String color, Integer quantity) {
+  public Product(String name, String category, String size, String color, Integer quantity) {
     this.name = name;
+    this.category = category;
     this.size = size;
     this.color = color;
     this.quantity = quantity;
@@ -45,6 +50,14 @@ public class Product {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
   }
 
   public String getSize() {
@@ -78,6 +91,7 @@ public class Product {
     Product product = (Product) o;
     return Objects.equals(id, product.id)
         && Objects.equals(name, product.name)
+        && Objects.equals(category, product.category)
         && Objects.equals(size, product.size)
         && Objects.equals(color, product.color)
         && Objects.equals(quantity, product.quantity);
@@ -85,6 +99,6 @@ public class Product {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, size, color, quantity);
+    return Objects.hash(id, name, category, size, color, quantity);
   }
 }

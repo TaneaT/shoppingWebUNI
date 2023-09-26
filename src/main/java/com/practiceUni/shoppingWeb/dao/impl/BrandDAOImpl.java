@@ -36,20 +36,23 @@ public class BrandDAOImpl implements BrandDAO {
           int generatedId = generatedKeys.getInt(1);
           brand.setId(generatedId);
 
-          String connectsProductIdToBrandsSQL = "INSERT INTO brands_product(product_id, brand_id) VALUES (?,?)";
+          String connectsProductIdToBrandsSQL =
+              "INSERT INTO brands_product(product_id, brand_id) VALUES (?,?)";
 
-          try(PreparedStatement productsIdToBrand = conn.prepareStatement(connectsProductIdToBrandsSQL)){
-
-            productsIdToBrand.setInt(1, brand.getProductId());
-            productsIdToBrand.setInt(2,generatedId);
+          try (PreparedStatement productsIdToBrand =
+              conn.prepareStatement(connectsProductIdToBrandsSQL)) {
+            if (brand.getId() != null) {
+              productsIdToBrand.setInt(1, brand.getProductId());
+            }
+            productsIdToBrand.setInt(2, generatedId);
             productsIdToBrand.executeUpdate();
-
           }
         }
       }
 
     } catch (SQLException e) {
       LOGGER.error("Failed to create a brand " + e);
+      e.printStackTrace();
     }
 
     return brand;
@@ -93,18 +96,20 @@ public class BrandDAOImpl implements BrandDAO {
 
   @Override
   public Brand findById(Integer id) {
-    String sql = "SELECT brands.brand_id," +
-            "brands.brand_name," +
-            "brands.brand_email," +
-            "products.product_id ," +
-            "products.product_name ," +
-            "products.product_size ," +
-            "products.product_color " +
-            " FROM brands " +
-            "JOIN brands_product " +
-            "ON brands_product.brand_id = brands.brand_id " +
-            "JOIN products ON brands_product.product_id = products.product_id " +
-            "WHERE brands.brand_id = ?";
+    String sql =
+        "SELECT brands.brand_id,"
+            + "brands.brand_name,"
+            + "brands.brand_email,"
+            + "products.product_id ,"
+            + "products.product_name ,"
+           + " products.product_category,"
+            + "products.product_size ,"
+            + "products.product_color "
+            + " FROM brands "
+            + "JOIN brands_product "
+            + "ON brands_product.brand_id = brands.brand_id "
+            + "JOIN products ON brands_product.product_id = products.product_id "
+            + "WHERE brands.brand_id = ?";
 
     Brand brand = new Brand();
 
@@ -125,10 +130,11 @@ public class BrandDAOImpl implements BrandDAO {
         String email = resultSet.getString("brand_email");
         Integer productId = resultSet.getInt("product_id");
         String productName = resultSet.getString("product_name");
+        String productCategory = resultSet.getString("product_category");
         String productSize = resultSet.getString("product_size");
         String productColor = resultSet.getString("product_color");
 
-        brand = new Brand(brandId, name, email, productId,productName,productSize,productColor);
+        brand = new Brand(brandId, name, email, productId, productName,productCategory, productSize, productColor);
       }
 
     } catch (SQLException e) {
@@ -140,18 +146,20 @@ public class BrandDAOImpl implements BrandDAO {
 
   @Override
   public Brand findByName(String name) {
-     String sql = "SELECT brands.brand_id," +
-            "brands.brand_name," +
-            "brands.brand_email," +
-            "products.product_id ," +
-            "products.product_name," +
-            "products.product_size," +
-            "products.product_color" +
-            " FROM brands " +
-            "JOIN brands_product " +
-            "ON brands_product.brand_id = brands.brand_id " +
-            "JOIN products ON brands_product.product_id = products.product_id " +
-            "WHERE brands.brand_name = ?";
+    String sql =
+        "SELECT brands.brand_id,"
+            + "brands.brand_name,"
+            + "brands.brand_email,"
+            + "products.product_id ,"
+            + "products.product_name,"
+           + " products.product_category,"
+            + "products.product_size,"
+            + "products.product_color"
+            + " FROM brands "
+            + "JOIN brands_product "
+            + "ON brands_product.brand_id = brands.brand_id "
+            + "JOIN products ON brands_product.product_id = products.product_id "
+            + "WHERE brands.brand_name = ?";
 
     Brand brand = new Brand();
 
@@ -168,10 +176,12 @@ public class BrandDAOImpl implements BrandDAO {
         String email = resultSet.getString("brand_email");
         Integer productId = resultSet.getInt("product_id");
         String productName = resultSet.getString("product_name");
+        String productCategory = resultSet.getString("product_category");
         String productSize = resultSet.getString("product_size");
         String productColor = resultSet.getString("product_color");
 
-        brand = new Brand(brandId,  brandName, email, productId, productName,productSize,productColor);
+        brand =
+            new Brand(brandId, brandName, email, productId, productName,productCategory, productSize, productColor);
       }
 
     } catch (SQLException e) {
@@ -183,17 +193,19 @@ public class BrandDAOImpl implements BrandDAO {
 
   @Override
   public List<Brand> getAll() {
-    String sql = "SELECT brands.brand_id," +
-            "brands.brand_name," +
-            "brands.brand_email," +
-            "products.product_id AS product_id," +
-            "products.product_name," +
-            "products.product_size," +
-            "products.product_color" +
-            " FROM brands " +
-            "JOIN brands_product " +
-            "ON brands_product.brand_id = brands.brand_id " +
-            "JOIN products ON brands_product.product_id = products.product_id ";
+    String sql =
+        "SELECT brands.brand_id,"
+            + "brands.brand_name,"
+            + "brands.brand_email,"
+            + "products.product_id AS product_id,"
+            + "products.product_name,"
+            + " products.product_category,"
+            + "products.product_size,"
+            + "products.product_color"
+            + " FROM brands "
+            + "JOIN brands_product "
+            + "ON brands_product.brand_id = brands.brand_id "
+            + "JOIN products ON brands_product.product_id = products.product_id ";
 
     List<Brand> brands = new ArrayList<>();
 
@@ -208,10 +220,12 @@ public class BrandDAOImpl implements BrandDAO {
         String email = resultSet.getString("brand_email");
         Integer productId = resultSet.getInt("product_id");
         String productName = resultSet.getString("product_name");
+        String productCategory = resultSet.getString("product_category");
         String productSize = resultSet.getString("product_size");
         String productColor = resultSet.getString("product_color");
 
-        brands.add(new Brand(brandId, name, email,productId,productName,productSize,productColor));
+        brands.add(
+            new Brand(brandId, name, email, productId, productName,productCategory, productSize, productColor));
       }
 
     } catch (SQLException e) {

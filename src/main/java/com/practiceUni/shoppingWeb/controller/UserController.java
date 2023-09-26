@@ -2,12 +2,16 @@ package com.practiceUni.shoppingWeb.controller;
 
 import com.practiceUni.shoppingWeb.domain.User;
 import com.practiceUni.shoppingWeb.service.UserService;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
+
+@Controller
 @RequestMapping("api/user")
 public class UserController {
 
@@ -17,58 +21,148 @@ public class UserController {
     this.userService = userService;
   }
 
+  @GetMapping("/main")
+  public String mainPage(Model model, Principal principal, @RequestParam(value = "login", required = false) String login, HttpSession session) {
+    User user = null;
+
+    if (login != null) {
+      user = userService.findUserByLogin(login);
+      session.setAttribute("userLogin", login); // Set the user's login as a session attribute
+    } else if (principal != null) {
+      login = principal.getName();
+      user = userService.findUserByLogin(login);
+      session.setAttribute("userLogin", login); // Set the user's login as a session attribute
+    } else {
+      // If there's no explicit login parameter and no principal,
+      // check if there's a userLogin attribute in the session
+      login = (String) session.getAttribute("userLogin");
+      if (login != null) {
+        user = userService.findUserByLogin(login);
+      }
+    }
+
+    model.addAttribute("user", user);
+    return "main";
+  }
+
+
+
   @GetMapping("/signup")
-  public String showSignUpForm(User user) {
+  public String showSignUpForm(Model model) {
+    model.addAttribute("user", new User());
     return "add-user";
   }
 
   @PostMapping("/adduser")
-  public String addUser(@Validated User user,BindingResult result,Model model){
-    if(result.hasErrors()){
+  public String signUp(@ModelAttribute("user") User user, BindingResult bindingResult, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    if (bindingResult.hasErrors()) {
       return "add-user";
     }
-    userService.createUser(user);
-    return "redirect:/index";
+
+    try {
+      userService.createUser(user);
+      System.out.println("User created successfully");
+
+      // Set the user's login as a session attribute
+      session.setAttribute("userLogin", user.getLogin());
+
+      redirectAttributes.addAttribute("login", user.getLogin());
+
+      return "redirect:/api/user/main"; // Redirect to the main page
+    } catch (Exception e) {
+      e.printStackTrace();
+      model.addAttribute("error", "An error occurred while creating the user.");
+      System.out.println("Error creating user: " + e.getMessage());
+      return "add-user";
+    }
   }
 
-  @GetMapping("/update-form/{id}")
-  public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-    User user = userService.findUserById(id);
-           if(user == null) {
-             throw  new IllegalArgumentException("Invalid user Id:" + id); }
 
-    model.addAttribute("user", user);
-    return "update-user";
-  }
+  @GetMapping("/profile")
+  public String userProfile(Model model, HttpSession session) {
+    String login = (String) session.getAttribute("userLogin");
 
-  @PostMapping("/update/{id}")
-  public String updateUser(@PathVariable("id") Integer id, @Validated User user,
-                           BindingResult result, Model model) {
-    if (result.hasErrors()) {
-      user.setId(id);
-      return "update-user";
+    if (login != null) {
+      User user = userService.findUserByLogin(login);
+
+      if (user != null) {
+        model.addAttribute("user", user);
+        return "profile";
+      }
     }
 
-    userService.createUser(user);
-    return "redirect:/index";
+    // If the user is not authenticated or the user is not found, redirect to sign up
+    return "redirect:/api/user/signup";
   }
 
-  @GetMapping("/delete/{id}")
-  public String deleteUser(@PathVariable("id") Integer id, Model model) {
+
+  @GetMapping("/logout")
+  public String logout(HttpSession session) {
+    session.removeAttribute("userLogin");
+    return "redirect:/api/user/main";
+  }
+
+  @GetMapping("/signin")
+  public String showSignInForm(Model model) {
+    model.addAttribute("user", new User());
+    return "sign-in";
+  }
+
+  @PostMapping("/signin")
+  public String signIn(@ModelAttribute("user") User user, HttpSession session, Model model) {
+    User authenticatedUser = userService.authenticateUser(user.getLogin(), user.getPassword());
+
+    if (authenticatedUser != null) {
+      session.setAttribute("userLogin", authenticatedUser.getLogin());
+      model.addAttribute("user", authenticatedUser);
+      return "redirect:/api/user/main";
+    } else {
+      model.addAttribute("error", "Invalid login or password. Please try again.");
+      return "sign-in";
+    }
+  }
+
+
+  @GetMapping("/profile/update/{id}")
+  public String showUpdateProfileForm(@PathVariable Integer id, Model model) {
+    // Retrieve user information by id and pass it to the view
     User user = userService.findUserById(id);
-            if(user == null){
-              throw new IllegalArgumentException("Invalid user Id:" + id);}
-    userService.deleteUserById(id);
-    return "redirect:/index";
+    model.addAttribute("user", user);
+    return "update";
   }
 
-  @GetMapping("/find/id/{id}")
-  public User findUserById(@PathVariable Integer id) {
-    return userService.findUserById(id);
+  @PostMapping("/profile/update/address")
+  public String updateAddress(@RequestParam("userId") Integer userId, @RequestParam("newAddress") String newAddress, RedirectAttributes redirectAttributes) {
+    User user = userService.findUserById(userId);
+    user.setAddress(newAddress);
+    userService.updateUser(user);
+    redirectAttributes.addFlashAttribute("message", "Address updated successfully");
+    return "redirect:/api/user/profile";
   }
 
-  @GetMapping("/find/login/{login}")
-  public User findUserByLogin(@PathVariable String login) {
-    return userService.findUserByLogin(login);
+  @PostMapping("/profile/update/password")
+  public String updatePassword(@RequestParam("userId") Integer userId, @RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword, RedirectAttributes redirectAttributes) {
+    User user = userService.findUserById(userId);
+    if (oldPassword.equals(user.getPassword())) {
+      user.setPassword(newPassword);
+      userService.updateUserPassword(user);
+      redirectAttributes.addFlashAttribute("message", "Password updated successfully");
+    } else {
+      redirectAttributes.addFlashAttribute("message", "Incorrect old password. Password not updated.");
+    }
+    return "redirect:/api/user/profile";
   }
+
+  @PostMapping("profile/delete")
+  public String deleteAccount(@RequestParam("userId") Integer userId) {
+    userService.deleteUserById(userId);
+
+    return "redirect:/api/user/main";
+  }
+
 }
+
+
+
+
+

@@ -43,6 +43,7 @@ public class UserDAOImpl implements UserDAO {
 
     } catch (SQLException e) {
       LOGGER.error("Failed to create the user" + e);
+      e.printStackTrace();
     }
     return user;
   }
@@ -69,6 +70,31 @@ public class UserDAOImpl implements UserDAO {
 
     return user;
   }
+
+  @Override
+  public User updatePassword(User user) {
+    String sql = "UPDATE user SET user_password = ? WHERE user_id = ?";
+
+    try (Connection conn = JdbcConnection.getConnection();
+         PreparedStatement updateUser = conn.prepareStatement(sql)) {
+
+      updateUser.setString(1, user.getPassword());
+      if(user.getId() != null){
+        updateUser.setInt(2, user.getId());
+      } else {
+        return null;
+      }
+
+      updateUser.executeUpdate();
+
+    } catch (SQLException e) {
+      LOGGER.error("Failed to update the user with id: " + user.getId() + e);
+    }
+
+    return user;
+  }
+
+
 
   @Override
   public boolean deleteById(Integer id) {

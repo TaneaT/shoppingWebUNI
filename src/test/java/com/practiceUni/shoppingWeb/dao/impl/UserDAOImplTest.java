@@ -20,23 +20,10 @@ class UserDAOImplTest {
   @Autowired private UserDAO userDAO;
 
   private User getTestUser() {
-    return new User("firstName", "lastName", "login", "password", "email", "address");
+    return new User("firstName", "lastName", "log7in", "password", "em7ail", "address");
   }
 
-  @AfterEach
-  void tearDown() {
-    String userSql = "DELETE FROM user";
 
-
-    try (Connection conn = JdbcConnection.getConnection();
-         PreparedStatement user = conn.prepareStatement(userSql)){
-
-      user.executeUpdate();
-
-    } catch (SQLException e) {
-      e.getStackTrace();
-    }
-  }
 
   @Test
   void shouldCreateUser() {

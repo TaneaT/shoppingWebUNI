@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+  <!-- Add your head content here -->
+  <style>
+    /* Add your CSS styles here */
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: row;
+      margin: 0;
+      background-color: #EFEFDE;
+    }
+
+    .example1 {
+      background-color: #BDCFBD;
+      background-size: cover;
+      padding: 30px;
+      background-blend-mode: darken;
+      position: fixed;
+      width: 100%;
+      z-index: -1;
+      margin-left: 100px;
+      color: white;
+      font-family:bodoni mt white,serif ;
+      font-size: 20px;
+    }
+
+    #mySidebar {
+      /* Sidebar styles here */
+      background-color: #9CAA9C;
+      padding: 10px 60px; /* Increase the horizontal padding */
+      color: #9CAA9C;
+      min-height: 100vh;
+      width: 170px; /* Increase the width of the sidebar */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #main-content {
+      /* Main content styles here */
+      flex-grow: 1;
+      padding: 20px;
+      margin-top: 140px; /* Add top margin */
+      font-size: 18px;
+      font-family: bodoni mt , serif;
+
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: white;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 8px 16px;
+      font-size: 26px;
+      margin: 8px 0;
+      background-color: #9CAA9C;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: bodoni mt white, serif;
+    }
+
+    .btn:hover {
+      background-color: #BDCFBD;
+      color: white;
+      border: 2px solid #fff;
+    }
+
+    .update-section {
+      margin-bottom: 20px;
+    }
+
+    .update-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .update-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    .update-button {
+      background-color: #9CAA9C;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      font-family: bodoni mt white, serif;
+    }
+
+    .update-button:hover {
+      background-color: #BDCFBD;
+    }
+  </style>
+  <title></title>
+</head>
+
+<body>
+<div class="example1">
+  <h2>User Profile</h2>
+</div>
+
+<div id="mySidebar">
+  <a th:href="@{/api/user/main}" class="btn btn-link menu-button">Back</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('info')">Information</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('updateAddress')">Update Address</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('updatePassword')">Update Password</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('deleteAccount')">Account</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleSellerSections()">Become a Seller</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-products" style="display:none;" onclick="toggleProfileSections('addProduct')">Products</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-brands" style="display:none;" onclick="toggleProfileSections('addBrand')">Brands</a>
+</div>
+
+<div id="main-content">
+  <div id="successMessage" style="color: green;"></div>
+  <div id="errorMessage" style="color: red;"></div>
+
+  <div id="infoSection">
+    <div>
+      <p>User ID: <span th:text="${user.id}"></span></p>
+      <p>First Name: <span th:text="${user.firstName}"></span></p>
+      <p>Last Name: <span th:text="${user.lastName}"></span></p>
+      <p>Username: <span th:text="${user.login}"></span></p>
+      <p>Email: <span th:text="${user.email}"></span></p>
+      <p>Address: <span th:text="${user.address}"></span></p>
+    </div>
+    <div th:if="${user == null}">
+      <p>User profile not found.</p>
+    </div>
+  </div>
+
+  <div id="updateAddressSection" style="display:none;">
+    <div class="update-section">
+      <h3>Update Address</h3>
+      <form th:action="@{/api/user/profile/update/address}" method="post">
+        <input type="hidden" name="userId" th:value="${user.id}" />
+        <div class="update-label">Current Address:</div>
+        <label>
+          <input type="text" class="update-input" name="currentAddress" required />
+        </label>
+        <div class="update-label">New Address:</div>
+        <label>
+          <input type="text" class="update-input" name="newAddress" required />
+        </label>
+        <button type="submit" class="update-button">Update</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="updatePasswordSection" style="display:none;">
+    <div class="update-section">
+      <h3>Update Password</h3>
+      <form th:action="@{/api/user/profile/update/password}" method="post">
+        <input type="hidden" name="userId" th:value="${user.id}" />
+        <div class="update-label">Old Password:</div>
+        <label>
+          <input type="password" class="update-input" name="oldPassword" required />
+        </label>
+        <div class="update-label">New Password:</div>
+        <label>
+          <input type="password" class="update-input" name="newPassword" required />
+        </label>
+        <button type="submit" class="update-button">Update</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="deleteAccountSection" style="display:none;">
+    <div class="update-section">
+      <h3>Delete Account</h3>
+      <form th:action="@{/api/user/profile/delete}" method="post">
+        <input type="hidden" name="userId" th:value="${user.id}" />
+        <button type="submit" class="update-button" style="background-color: #FF6F61;">Delete Account</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="addProductSection" style="display:none;">
+    <div class="update-section">
+      <h3>Add Product</h3>
+      <form th:action="@{/api/product/create}" method="post">
+        <div class="update-label">Product Name:</div>
+        <label>
+          <input type="text" class="update-input" name="name" required />
+        </label>
+        <div class="update-label">Category:</div>
+        <label>
+          <input type="text" class="update-input" name="category" required />
+        </label>
+        <div class="update-label">Size:</div>
+        <label>
+          <input type="text" class="update-input" name="size" required />
+        </label>
+        <div class="update-label">Color:</div>
+        <label>
+          <input type="text" class="update-input" name="color" required />
+        </label>
+        <div class="update-label">Quantity:</div>
+        <label>
+          <input type="number" class="update-input" name="quantity" required />
+        </label>
+        <button type="submit" class="update-button">Add Product</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="addBrandSection" style="display:none;">
+    <div class="update-section">
+      <h3>Add Brand</h3>
+      <form th:action="@{/api/brand/create}" method="post">
+        <div class="update-label">Brand Name:</div>
+        <label>
+          <input type="text" class="update-input" name="name" required />
+        </label>
+        <div class="update-label">Brand Email:</div>
+        <label>
+          <input type="email" class="update-input" name="email" required />
+        </label>
+        <div class="update-label">Product ID:</div>
+        <label>
+          <input type="number" class="update-input" name="productId" required />
+        </label>
+        <button type="submit" class="update-button">Add Brand</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function showSuccessMessage(message) {
+      const successMessage = document.getElementById("successMessage");
+      successMessage.innerText = message;
+      successMessage.style.display = "block";
+    }
+
+    function hideSuccessMessage() {
+      const successMessage = document.getElementById("successMessage");
+      successMessage.style.display = "none";
+    }
+
+    function showErrorMessage(message) {
+      const errorMessage = document.getElementById("errorMessage");
+      errorMessage.innerText = message;
+      errorMessage.style.display = "block";
+    }
+
+    function hideErrorMessage() {
+      const errorMessage = document.getElementById("errorMessage");
+      errorMessage.style.display = "none";
+    }
+
+    function toggleProfileSections(section) {
+      hideSuccessMessage();
+      hideErrorMessage();
+
+      const infoSection = document.getElementById("infoSection");
+      const updateAddressSection = document.getElementById("updateAddressSection");
+      const updatePasswordSection = document.getElementById("updatePasswordSection");
+      const deleteAccountSection = document.getElementById("deleteAccountSection");
+      const addProductSection = document.getElementById("addProductSection");
+      const addBrandSection = document.getElementById("addBrandSection");
+
+      if (section === 'updateAddress') {
+        infoSection.style.display = "none";
+        updateAddressSection.style.display = "block";
+        updatePasswordSection.style.display = "none";
+        deleteAccountSection.style.display = "none";
+        addProductSection.style.display = "none";
+        addBrandSection.style.display = "none";
+      } else if (section === 'updatePassword') {
+        infoSection.style.display = "none";
+        updateAddressSection.style.display = "none";
+        updatePasswordSection.style.display = "block";
+        deleteAccountSection.style.display = "none";
+        addProductSection.style.display = "none";
+        addBrandSection.style.display = "none";
+      } else if (section === 'info') {
+        infoSection.style.display = "block";
+        updateAddressSection.style.display = "none";
+        updatePasswordSection.style.display = "none";
+        deleteAccountSection.style.display = "none";
+        addProductSection.style.display = "none";
+        addBrandSection.style.display = "none";
+      } else if (section === 'deleteAccount') {
+        infoSection.style.display = "none";
+        updateAddressSection.style.display = "none";
+        updatePasswordSection.style.display = "none";
+        deleteAccountSection.style.display = "block";
+        addProductSection.style.display = "none";
+        addBrandSection.style.display = "none";
+      } else if (section === 'becomeSeller') {
+        const productsButton = document.querySelector(".menu-button-products");
+        const brandsButton = document.querySelector(".menu-button-brands");
+
+        productsButton.style.display = "block";
+        brandsButton.style.display = "block";
+      } else if (section === 'addProduct') {
+        infoSection.style.display = "none";
+        updateAddressSection.style.display = "none";
+        updatePasswordSection.style.display = "none";
+        deleteAccountSection.style.display = "none";
+        addProductSection.style.display = "block";
+        addBrandSection.style.display = "none";
+      } else if (section === 'addBrand') {
+        infoSection.style.display = "none";
+        updateAddressSection.style.display = "none";
+        updatePasswordSection.style.display = "none";
+        deleteAccountSection.style.display = "none";
+        addProductSection.style.display = "none";
+        addBrandSection.style.display = "block";
+      }
+    }
+
+    function toggleSellerSections() {
+      const productsButton = document.querySelector(".menu-button-products");
+      const brandsButton = document.querySelector(".menu-button-brands");
+
+      if (productsButton.style.display === "none" && brandsButton.style.display === "none") {
+        productsButton.style.display = "block";
+        brandsButton.style.display = "block";
+      } else {
+        productsButton.style.display = "none";
+        brandsButton.style.display = "none";
+      }
+    }
+  </script>
+
+  <div th:if="${user == null}">
+    <p>User profile not found.</p>
+  </div>
+</div>
+</body>
+
+</html>

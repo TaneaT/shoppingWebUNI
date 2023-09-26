@@ -9,6 +9,8 @@ public interface UserDAO extends DAO<User>{
 
     User update(User user);
 
+    User updatePassword(User user);
+
     boolean deleteById (Integer id);
 
     User findById(Integer id);

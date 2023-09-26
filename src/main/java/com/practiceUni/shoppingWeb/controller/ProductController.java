@@ -2,11 +2,13 @@ package com.practiceUni.shoppingWeb.controller;
 
 import com.practiceUni.shoppingWeb.domain.Product;
 import com.practiceUni.shoppingWeb.service.ProductService;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("api/product")
 public class ProductController {
 
@@ -16,11 +18,19 @@ public class ProductController {
         this.productService = productService;
     }
 
-
     @PostMapping("/create")
-    public Product createProduct(@RequestBody Product product){
-        return productService.createProduct(product);
+    public String addProduct(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+        Product isProductAdded = productService.createProduct(product);
+
+        if(isProductAdded != null) {
+            redirectAttributes.addFlashAttribute("successMessage", "Product added successfully");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product");
+        }
+
+        return "redirect:/api/user/profile";
     }
+
 
     @PutMapping("/update")
     public Product updateProduct(@RequestBody Product product){
@@ -28,7 +38,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete/{id}")
-            public boolean deleteProductById(@PathVariable Integer id){
+    public boolean deleteProductById(@PathVariable Integer id){
         return productService.deleteProductById(id);
     }
 
@@ -48,3 +58,4 @@ public class ProductController {
     }
 
 }
+

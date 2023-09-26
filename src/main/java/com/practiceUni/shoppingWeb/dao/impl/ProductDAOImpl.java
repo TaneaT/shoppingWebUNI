@@ -21,16 +21,17 @@ public class ProductDAOImpl implements ProductDAO {
   @Override
   public Product create(Product product) {
     String sql =
-        "INSERT INTO products(product_name, product_size, product_color, product_quantity) VALUES (?,?,?,?)";
+        "INSERT INTO products(product_name, product_category,product_size, product_color, product_quantity) VALUES (?,?,?,?,?)";
 
     try (Connection conn = JdbcConnection.getConnection();
         PreparedStatement createProduct =
             conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
       createProduct.setString(1, product.getName());
-      createProduct.setString(2, product.getSize());
-      createProduct.setString(3, product.getColor());
-      createProduct.setInt(4, product.getQuantity());
+      createProduct.setString(2,product.getCategory());
+      createProduct.setString(3, product.getSize());
+      createProduct.setString(4, product.getColor());
+      createProduct.setInt(5, product.getQuantity());
 
       int insertedRows = createProduct.executeUpdate();
 
@@ -106,11 +107,12 @@ public class ProductDAOImpl implements ProductDAO {
       while (resultSet.next()) {
         Integer productId = resultSet.getInt("product_id");
         String name = resultSet.getString("product_name");
+        String category = resultSet.getString("product_category");
         String size = resultSet.getString("product_size");
         String color = resultSet.getString("product_color");
         Integer quantity = resultSet.getInt("product_quantity");
 
-        product = new Product(productId, name, size, color, quantity);
+        product = new Product(productId, name, category, size, color, quantity);
       }
 
     } catch (SQLException e) {
@@ -140,11 +142,12 @@ public class ProductDAOImpl implements ProductDAO {
       while (resultSet.next()) {
         Integer Id = resultSet.getInt("product_id");
         String productName = resultSet.getString("product_name");
+        String category = resultSet.getString("product_category");
         String size = resultSet.getString("product_size");
         String color = resultSet.getString("product_color");
         Integer quantity = resultSet.getInt("product_quantity");
 
-        product = new Product(Id, productName, size, color, quantity);
+        product = new Product(Id, productName, category, size, color, quantity);
       }
 
     } catch (SQLException e) {
@@ -168,11 +171,12 @@ public class ProductDAOImpl implements ProductDAO {
       while (resultSet.next()) {
         Integer Id = resultSet.getInt("product_id");
         String productName = resultSet.getString("product_name");
+        String category = resultSet.getString("product_category");
         String size = resultSet.getString("product_size");
         String color = resultSet.getString("product_color");
         Integer quantity = resultSet.getInt("product_quantity");
 
-        products.add(new Product(Id, productName, size, color, quantity));
+        products.add(new Product(Id, productName,category, size, color, quantity));
       }
 
     } catch (SQLException e) {

@@ -1,13 +1,16 @@
 package com.practiceUni.shoppingWeb.controller;
 
 import com.practiceUni.shoppingWeb.domain.Brand;
+import com.practiceUni.shoppingWeb.domain.Product;
 import com.practiceUni.shoppingWeb.service.BrandService;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("api/brand")
 public class BrandController {
   private final BrandService brandService;
@@ -17,8 +20,16 @@ public class BrandController {
   }
 
   @PostMapping("/create")
-  public Brand createBrand(@RequestBody Brand brand) {
-    return brandService.create(brand);
+  public String addBrand(@ModelAttribute Brand brand, RedirectAttributes redirectAttributes) {
+    Brand isBrandAdded = brandService.create(brand);
+
+    if(isBrandAdded != null) {
+      redirectAttributes.addFlashAttribute("successMessage", "Brand added successfully");
+    } else {
+      redirectAttributes.addFlashAttribute("errorMessage", "Failed to add brand");
+    }
+
+    return "redirect:/api/user/profile";
   }
 
   @PutMapping("/update")

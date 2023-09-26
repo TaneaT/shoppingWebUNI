@@ -1,0 +1,14 @@
+<form th:action="@{/api/user/profile/update}" method="post">
+  <!-- Address update fields -->
+  <label for="newAddress">New Address:</label>
+  <input type="text" id="newAddress" name="newAddress" />
+
+  <!-- Password update fields -->
+  <label for="oldPassword">Old Password:</label>
+  <input type="password" id="oldPassword" name="oldPassword" />
+  <label for="newPassword">New Password:</label>
+  <input type="password" id="newPassword" name="newPassword" />
+
+  <!-- Submit button -->
+  <button type="submit">Update</button>
+</form>

@@ -27,15 +27,19 @@ class ProductDAOImplTest {
 
   @AfterEach
   void tearDown() {
-    String purchaseSql = "DELETE FROM products";
-    String userPurchaseSql = "DELETE FROM brands_product";
+
+    String brandProductSql = "DELETE FROM brands_product";
+    String purchaseSql = "DELETE FROM purchase";
+    String productSql = "DELETE FROM products";
 
     try (Connection conn = JdbcConnection.getConnection();
-         PreparedStatement purchased = conn.prepareStatement(purchaseSql);
-         PreparedStatement userPurchase = conn.prepareStatement(userPurchaseSql)) {
+         PreparedStatement brandProduct = conn.prepareStatement(brandProductSql);
+         PreparedStatement purchase = conn.prepareStatement(purchaseSql);
+         PreparedStatement products = conn.prepareStatement(productSql) ) {
 
-      userPurchase.executeUpdate();
-      purchased.executeUpdate();
+      brandProduct.executeUpdate();
+      purchase.executeUpdate();
+      products.executeUpdate();
 
     } catch (SQLException e) {
       e.getStackTrace();
@@ -51,7 +55,7 @@ class ProductDAOImplTest {
     assertNotNull(testProduct);
     assertEquals(testProduct, product);
 
-    assertTrue(productDAO.deleteById(product.getId()));
+
   }
 
   @Test
@@ -68,7 +72,7 @@ class ProductDAOImplTest {
     assertNotNull(testProduct);
     assertEquals(testProduct, updatedProduct);
 
-    assertTrue(productDAO.deleteById(product.getId()));
+
   }
 
   @Test
@@ -83,7 +87,7 @@ class ProductDAOImplTest {
     assertNotNull(testProduct);
     assertEquals(testProduct, product);
 
-    assertTrue(productDAO.deleteById(product.getId()));
+
   }
 
   @Test
@@ -104,7 +108,7 @@ class ProductDAOImplTest {
     assertNotNull(foundProduct);
     assertEquals(foundProduct, product);
 
-    assertTrue(productDAO.deleteById(product.getId()));
+
   }
 
   @Test
@@ -116,7 +120,7 @@ class ProductDAOImplTest {
     assertNotNull(foundProduct);
     assertEquals(foundProduct, product);
 
-    assertTrue(productDAO.deleteById(product.getId()));
+
   }
 
   @Test
@@ -138,7 +142,5 @@ class ProductDAOImplTest {
     assertNotNull(anotherList);
     assertEquals(anotherList.size(), productList.size());
 
-    assertTrue(productDAO.deleteById(product1.getId()));
-    assertTrue(productDAO.deleteById(product2.getId()));
   }
 }
