@@ -32,13 +32,21 @@ public class BrandController {
     return "redirect:/api/user/profile";
   }
 
+  @PostMapping("/update")
+  public String updateBrand(@RequestParam Integer brandId, @RequestParam String newEmail, RedirectAttributes redirectAttributes) {
+    Brand brand = brandService.findBrandById(brandId);
+    if (brand != null) {
+      brand.setEmail(newEmail);
+      brandService.update(brand);
+      redirectAttributes.addFlashAttribute("successMessage", "Brand updated successfully");
+    } else {
+      redirectAttributes.addFlashAttribute("errorMessage", "Failed to update brand");
+    }
 
-
-
-  @PutMapping("/update")
-  public Brand updateBrand(@RequestBody Brand brand) {
-    return brandService.update(brand);
+    return "redirect:/api/user/profile";
   }
+
+
 
   @DeleteMapping("/delete/{id}")
   public boolean deleteBrandById(@PathVariable Integer id) {

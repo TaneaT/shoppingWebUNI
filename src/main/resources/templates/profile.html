@@ -2,10 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-  <!-- Add your head content here -->
   <style>
-    /* Add your CSS styles here */
-
     body {
       font-family: Arial, sans-serif;
       display: flex;
@@ -24,30 +21,27 @@
       z-index: -1;
       margin-left: 100px;
       color: white;
-      font-family:bodoni mt white,serif ;
+      font-family: bodoni mt white, serif;
       font-size: 20px;
     }
 
     #mySidebar {
-      /* Sidebar styles here */
       background-color: #9CAA9C;
-      padding: 10px 60px; /* Increase the horizontal padding */
+      padding: 10px 60px;
       color: #9CAA9C;
       min-height: 100vh;
-      width: 170px; /* Increase the width of the sidebar */
+      width: 170px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     #main-content {
-      /* Main content styles here */
       flex-grow: 1;
       padding: 20px;
-      margin-top: 140px; /* Add top margin */
+      margin-top: 140px;
       font-size: 18px;
-      font-family: bodoni mt , serif;
-
+      font-family: bodoni mt, serif;
     }
 
     h2 {
@@ -132,12 +126,13 @@
   <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleSellerSections()">Become a Seller</a>
   <a href="javascript:void(0);" class="btn btn-link menu-button-products" style="display:none;" onclick="toggleProfileSections('addProduct')">Products</a>
   <a href="javascript:void(0);" class="btn btn-link menu-button-brands" style="display:none;" onclick="toggleProfileSections('addBrand')">Brands</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-updateProduct" style="display:none;" onclick="toggleProfileSections('updateProduct')">Update Product</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-updateBrand" style="display:none;" onclick="toggleProfileSections('updateBrand')">Update Brand</a>
 </div>
 
 <div id="main-content">
   <div id="successMessage" th:text="${successMessage}" style="color: green;"></div>
   <div id="errorMessage" th:text="${errorMessage}" style="color: red;"></div>
-
 
   <div id="infoSection">
     <div>
@@ -249,6 +244,40 @@
     </div>
   </div>
 
+  <div id="updateProductSection" style="display:none;">
+    <div class="update-section">
+      <h3>Update Product</h3>
+      <form th:action="@{/api/product/update}" method="post">
+        <div class="update-label">Product ID:</div>
+        <label>
+          <input type="number" class="update-input" name="productId" required />
+        </label>
+        <div class="update-label">New Quantity:</div>
+        <label>
+          <input type="number" class="update-input" name="newQuantity" required />
+        </label>
+        <button type="submit" class="update-button">Update Product</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="updateBrandSection" style="display:none;">
+    <div class="update-section">
+      <h3>Update Brand</h3>
+      <form th:action="@{/api/brand/update}" method="post">
+        <div class="update-label">Brand ID:</div>
+        <label>
+          <input type="number" class="update-input" name="brandId" required />
+        </label>
+        <div class="update-label">New Email:</div>
+        <label>
+          <input type="email" class="update-input" name="newEmail" required />
+        </label>
+        <button type="submit" class="update-button">Update Brand</button>
+      </form>
+    </div>
+  </div>
+
   <script>
     function showSuccessMessage(message) {
       const successMessage = document.getElementById("successMessage");
@@ -282,68 +311,62 @@
       const deleteAccountSection = document.getElementById("deleteAccountSection");
       const addProductSection = document.getElementById("addProductSection");
       const addBrandSection = document.getElementById("addBrandSection");
+      const updateProductSection = document.getElementById("updateProductSection");
+      const updateBrandSection = document.getElementById("updateBrandSection");
+
+      infoSection.style.display = "none";
+      updateAddressSection.style.display = "none";
+      updatePasswordSection.style.display = "none";
+      deleteAccountSection.style.display = "none";
+      addProductSection.style.display = "none";
+      addBrandSection.style.display = "none";
+      updateProductSection.style.display = "none";
+      updateBrandSection.style.display = "none";
 
       if (section === 'updateAddress') {
-        infoSection.style.display = "none";
         updateAddressSection.style.display = "block";
-        updatePasswordSection.style.display = "none";
-        deleteAccountSection.style.display = "none";
-        addProductSection.style.display = "none";
-        addBrandSection.style.display = "none";
       } else if (section === 'updatePassword') {
-        infoSection.style.display = "none";
-        updateAddressSection.style.display = "none";
         updatePasswordSection.style.display = "block";
-        deleteAccountSection.style.display = "none";
-        addProductSection.style.display = "none";
-        addBrandSection.style.display = "none";
       } else if (section === 'info') {
         infoSection.style.display = "block";
-        updateAddressSection.style.display = "none";
-        updatePasswordSection.style.display = "none";
-        deleteAccountSection.style.display = "none";
-        addProductSection.style.display = "none";
-        addBrandSection.style.display = "none";
       } else if (section === 'deleteAccount') {
-        infoSection.style.display = "none";
-        updateAddressSection.style.display = "none";
-        updatePasswordSection.style.display = "none";
         deleteAccountSection.style.display = "block";
-        addProductSection.style.display = "none";
-        addBrandSection.style.display = "none";
       } else if (section === 'becomeSeller') {
         const productsButton = document.querySelector(".menu-button-products");
         const brandsButton = document.querySelector(".menu-button-brands");
-
         productsButton.style.display = "block";
         brandsButton.style.display = "block";
+        const updateProductButton = document.querySelector(".menu-button-updateProduct");
+        const updateBrandButton = document.querySelector(".menu-button-updateBrand");
+        updateProductButton.style.display = "block";
+        updateBrandButton.style.display = "block";
       } else if (section === 'addProduct') {
-        infoSection.style.display = "none";
-        updateAddressSection.style.display = "none";
-        updatePasswordSection.style.display = "none";
-        deleteAccountSection.style.display = "none";
         addProductSection.style.display = "block";
-        addBrandSection.style.display = "none";
       } else if (section === 'addBrand') {
-        infoSection.style.display = "none";
-        updateAddressSection.style.display = "none";
-        updatePasswordSection.style.display = "none";
-        deleteAccountSection.style.display = "none";
-        addProductSection.style.display = "none";
         addBrandSection.style.display = "block";
+      } else if (section === 'updateProduct') {
+        updateProductSection.style.display = "block";
+      } else if (section === 'updateBrand') {
+        updateBrandSection.style.display = "block";
       }
     }
 
     function toggleSellerSections() {
       const productsButton = document.querySelector(".menu-button-products");
       const brandsButton = document.querySelector(".menu-button-brands");
+      const updateProductButton = document.querySelector(".menu-button-updateProduct");
+      const updateBrandButton = document.querySelector(".menu-button-updateBrand");
 
       if (productsButton.style.display === "none" && brandsButton.style.display === "none") {
         productsButton.style.display = "block";
         brandsButton.style.display = "block";
+        updateProductButton.style.display = "block";
+        updateBrandButton.style.display = "block";
       } else {
         productsButton.style.display = "none";
         brandsButton.style.display = "none";
+        updateProductButton.style.display = "none";
+        updateBrandButton.style.display = "none";
       }
     }
   </script>

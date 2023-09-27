@@ -31,16 +31,21 @@ public class ProductController {
         return "redirect:/api/user/profile";
     }
 
+    @PostMapping("/update")
+    public String updateProduct(@RequestParam Integer productId, @RequestParam Integer newQuantity, RedirectAttributes redirectAttributes) {
+        Product product = productService.findProductById(productId);
+        if (product != null) {
+            product.setQuantity(newQuantity);
+            productService.updateProduct(product);
+            redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product");
+        }
 
-
-
-
-
-
-    @PutMapping("/update")
-    public Product updateProduct(@RequestBody Product product){
-        return productService.updateProduct(product);
+        return "redirect:/api/user/profile";
     }
+
+
 
     @DeleteMapping("/delete/{id}")
     public boolean deleteProductById(@PathVariable Integer id){
