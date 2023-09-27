@@ -32,6 +32,9 @@ public class BrandController {
     return "redirect:/api/user/profile";
   }
 
+
+
+
   @PutMapping("/update")
   public Brand updateBrand(@RequestBody Brand brand) {
     return brandService.update(brand);

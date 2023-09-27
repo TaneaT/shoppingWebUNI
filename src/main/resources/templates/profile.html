@@ -135,8 +135,9 @@
 </div>
 
 <div id="main-content">
-  <div id="successMessage" style="color: green;"></div>
-  <div id="errorMessage" style="color: red;"></div>
+  <div id="successMessage" th:text="${successMessage}" style="color: green;"></div>
+  <div id="errorMessage" th:text="${errorMessage}" style="color: red;"></div>
+
 
   <div id="infoSection">
     <div>
