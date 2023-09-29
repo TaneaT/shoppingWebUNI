@@ -3,6 +3,7 @@ package com.practiceUni.shoppingWeb.controller;
 import com.practiceUni.shoppingWeb.domain.Product;
 import com.practiceUni.shoppingWeb.service.ProductService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -61,6 +62,28 @@ public class ProductController {
     public Product findProductByName(@PathVariable String name){
         return productService.findProductByName(name);
     }
+
+    @GetMapping("/men")
+    public String getMenProducts(Model model) {
+        List<Product> products = productService.findProductByCategory("men");
+        model.addAttribute("products", products);
+        return "main"; // Assuming you have a Thymeleaf template named "product-list.html"
+    }
+
+    @GetMapping("/women")
+    public String getWomenProducts(Model model) {
+        List<Product> products = productService.findProductByCategory("women");
+        model.addAttribute("products", products);
+        return "main"; // Assuming you have a Thymeleaf template named "product-list.html"
+    }
+
+    @GetMapping("/kids")
+    public String getKidsProducts(Model model) {
+        List<Product> products = productService.findProductByCategory("kids");
+        model.addAttribute("products", products);
+        return "main"; // Assuming you have a Thymeleaf template named "product-list.html"
+    }
+
 
     @GetMapping("/find/all")
     public List<Product> getAllProducts(){

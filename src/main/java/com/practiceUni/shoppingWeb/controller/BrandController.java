@@ -5,10 +5,14 @@ import com.practiceUni.shoppingWeb.domain.Product;
 import com.practiceUni.shoppingWeb.service.BrandService;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("api/brand")
@@ -63,8 +67,14 @@ public class BrandController {
     return brandService.findBrandByName(name);
   }
 
-  @GetMapping("/find/all")
-  public List<Brand> getAllBrands() {
-    return brandService.getAllBrands();
+
+  @GetMapping("/all")
+  public String getAllBrands(Model model) {
+
+    List<Brand> brands = brandService.getAllBrands();
+            model.addAttribute("brands", brands);
+
+    return "redirect:/";
   }
+
 }

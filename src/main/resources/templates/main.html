@@ -8,34 +8,33 @@
 
   <!-- Add Bootstrap CSS -->
   <style>
-
     body {
       background-color: #e0ebe0;
     }
 
     .example1 {
-      background:rgba(0, 0, 0, 0.2) url('/3.jpg') no-repeat center fixed;
+      background: rgba(0, 0, 0, 0.2) url('/3.jpg') no-repeat center fixed;
       background-size: cover;
       padding: 30px;
       background-blend-mode: darken;
     }
 
     h2 {
-      color : black;
-      font-family:bodoni mt black,serif ;
+      color: black;
+      font-family: bodoni mt black, serif;
       font-size: 200%;
-      text-align:center;
+      text-align: center;
     }
 
     h1 {
       color: white;
-      font-family: bodoni mt black,serif;
+      font-family: bodoni mt black, serif;
       font-size: 300%;
       text-align: center;
     }
 
     p {
-      font-family:bodoni mt,serif;
+      font-family: bodoni mt, serif;
       font-size: 130%;
       text-align: left;
     }
@@ -43,7 +42,7 @@
     img {
       display: block;
       margin-left: auto;
-      margin-right:auto;
+      margin-right: auto;
     }
 
     .sidebar {
@@ -53,7 +52,7 @@
       z-index: 1;
       top: 0;
       left: 0;
-      background-color: #9CAA9C;
+      background-color: #9caa9c;
       overflow-x: hidden;
       transition: 0.5s;
       padding-top: 60px;
@@ -74,35 +73,35 @@
     }
 
     .menu-button {
-      background-color: #9CAA9C;
+      background-color: #9caa9c;
       color: white;
-      border: 2px solid #9CAA9C;
+      border: 2px solid #9caa9c;
       cursor: pointer;
       padding: 6px 12px;
       margin-left: 33px;
-      font-family:bodoni mt white,serif ;
+      font-family: bodoni mt white, serif;
     }
 
     .menu-button:hover {
-      background-color: #BDCFBD;
+      background-color: #bdcfbd;
       color: white;
       border: 2px solid #fff;
     }
 
     .category-button {
-      background-color: #9CAA9C;
+      background-color: #9caa9c;
       padding: 6px 12px;
       font-size: 26px;
       color: white;
       display: block;
       transition: 0.3s;
-      border: 2px solid #9CAA9C;
+      border: 2px solid #9caa9c;
       margin-left: 42px;
-      font-family:bodoni mt white,serif ;
+      font-family: bodoni mt white, serif;
     }
 
     .category-button:hover {
-      background-color: #BDCFBD;
+      background-color: #bdcfbd;
       color: white;
       border: 2px solid #fff;
     }
@@ -114,18 +113,18 @@
     }
 
     .top-button {
-      background-color: #9CAA9C;
+      background-color: #9caa9c;
       padding: 6px 12px;
       font-size: 26px;
       color: white;
       transition: 0.3s;
-      border: 2px solid #9CAA9C;
+      border: 2px solid #9caa9c;
       margin: 0 10px;
-      font-family:bodoni mt white,serif ;
+      font-family: bodoni mt white, serif;
     }
 
     .top-button:hover {
-      background-color: #BDCFBD;
+      background-color: #bdcfbd;
       border: 2px solid #fff;
     }
 
@@ -140,24 +139,39 @@
       justify-content: center;
       align-items: center;
       height: 15vh;
-
     }
-
-
-
 
     .image-container {
       float: left;
-
     }
 
     .image-container img {
-      width: 50%; /* Make sure the image doesn't exceed its container */
+      width: 50%;
       height: auto;
-      display: block; /* Ensure it doesn't have extra spacing */
+      display: block;
     }
 
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
 
+    .product {
+      margin: 10px;
+      width: 30%;
+      text-align: center;
+    }
+
+    .product img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .product-name {
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -173,18 +187,17 @@
   <a th:href="@{/api/user/profile}" class="btn btn-link menu-button">Profile</a>
   <button class="btn btn-link category-button" onclick="toggleCategories()">Categories</button>
   <div id="categories" style="display:none; padding-left: 20px;">
-    <a th:href="@{/api/products/men}" class="btn btn-link menu-button">Men</a>
-    <a th:href="@{/api/products/women}" class="btn btn-link menu-button">Women</a>
-    <a th:href="@{/api/products/kids}" class="btn btn-link menu-button">Kids</a>
+    <a th:href="@{/api/products/men}" id="seeAllMen" class="btn btn-link menu-button" onclick="toggleList()">Men</a>
+    <a th:href="@{/api/products/women}" id="seeAllWomen" class="btn btn-link menu-button" onclick="toggleList()">Women</a>
+    <a th:href="@{/api/products/kids}" id="seeAllKids" class="btn btn-link menu-button" onclick="toggleList()">Kids</a>
   </div>
 
-  <!-- Add Log Out and Sign In buttons -->
   <a th:href="@{/api/user/logout}" class="btn btn-link menu-button">Log Out</a>
-  <a th:href="@{/api/user/signin}" class="btn btn-link menu-button">Sign In</a>
+  <a th:href="@{/api/user/signin}" class="btn btn-link menu-button" >Sign In</a>
 </div>
 
 <div id="main-content">
-  <button class="btn btn-link menu-button rounded" onmouseover="openNav()" style="font-size: 28px; position: absolute; top: 8px; left: -25px; height: 50px; width: 50px; background-color: #9CAA9C; border-color: #9CAA9C; display: flex; justify-content: center; align-items: center;">☰</button>
+  <button class="btn btn-link menu-button rounded" onmouseover="openNav()" style="font-size: 28px; position: absolute; top: 8px; left: -25px; height: 50px; width: 50px; background-color: #9caa9c; border-color: #9caa9c; display: flex; justify-content: center; align-items: center;">☰</button>
 
   <div class="top-buttons">
     <button class="btn btn-link top-button">Men</button>
@@ -195,17 +208,25 @@
   <pre></pre>
   <pre></pre>
   <pre></pre>
-  <!-- Move information texts here -->
-  <div th:if="${user != null}" class="centered-text" style="font-size: 24px; color: #9CAA9C;">
+
+  <div th:if="${user != null}" class="centered-text" style="font-size: 24px; color: #9caa9c;">
     <p>Welcome, <span th:text="${user.login}"></span>!</p>
   </div>
-  <div th:if="${user == null}" class="centered-text" style="font-size: 24px; color: #9CAA9C;">
+
+  <div th:if="${user == null}" class="centered-text" style="font-size: 24px; color: #9caa9c;">
     <p>You are not logged in.</p>
   </div>
-</div>
 
-<!-- Move images below the information texts -->
-<div class="image-container">
+  <div id="listContainer" style="display: none;">
+    <div th:each="product : ${products}" class="product">
+      <img th:src="@{'/path/to/images/' + ${product.image}}" alt="Product Image">
+      <p th:text="${product.name}" class="product-name"></p>
+    </div>
+  </div>
+
+
+
+  <div class="image-container">
   <div style="display: flex; align-items: center;">
     <img src="/4021509.jpg" alt="Sales" style="float: left; margin-right: 10px;">
     <img src="/promo.png" alt="Promo codes" style="float: right; width:auto; height: auto">
@@ -220,19 +241,31 @@
 
   function closeNav() {
     document.getElementById("mySidebar").style.width = "0";
-    document.getElementById("main-content").style.marginLeft= "0";
+    document.getElementById("main-content").style.marginLeft = "0";
   }
 
   function toggleCategories() {
     var categories = document.getElementById("categories");
     if (categories.style.display === "none") {
       categories.style.display = "block";
+      document.getElementById("listContainer").style.display = "none";
+      document.getElementById("imageContainer").style.display = "block";
     } else {
       categories.style.display = "none";
     }
   }
-</script>
 
+  function toggleList() {
+    const listContainer = document.getElementById("listContainer");
+    listContainer.style.display = "block";
+
+    const imageContainer = document.getElementById("imageContainer");
+    imageContainer.style.display = "none";
+  }
+
+
+</script>
+</div>
 </body>
 
 </html>

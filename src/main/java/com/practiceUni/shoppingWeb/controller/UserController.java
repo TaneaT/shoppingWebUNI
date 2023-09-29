@@ -1,6 +1,8 @@
 package com.practiceUni.shoppingWeb.controller;
 
+import com.practiceUni.shoppingWeb.domain.Brand;
 import com.practiceUni.shoppingWeb.domain.User;
+import com.practiceUni.shoppingWeb.service.BrandService;
 import com.practiceUni.shoppingWeb.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("api/user")
@@ -17,8 +20,11 @@ public class UserController {
 
   private final UserService userService;
 
-  public UserController(UserService userService) {
+  private final BrandService brandService;
+
+  public UserController(UserService userService, BrandService brandService) {
     this.userService = userService;
+    this.brandService = brandService;
   }
 
   @GetMapping("/main")
@@ -87,6 +93,11 @@ public class UserController {
 
       if (user != null) {
         model.addAttribute("user", user);
+
+        // Retrieve brands and add them to the model
+        List<Brand> brands = brandService.getAllBrands();
+        model.addAttribute("brands", brands);
+
         return "profile";
       }
     }
@@ -94,6 +105,7 @@ public class UserController {
     // If the user is not authenticated or the user is not found, redirect to sign up
     return "redirect:/api/user/signup";
   }
+
 
 
   @GetMapping("/logout")

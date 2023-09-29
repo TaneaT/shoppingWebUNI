@@ -77,6 +77,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> findProductByCategory(String category) {
+        if(category == null){
+            return null;
+        }
+        List<Product> products = productDAO.findByCategory(category);
+
+        if(products == null){
+            LOGGER.error("Failed to find a product due to wrong name: " + category);
+            return null;
+        } else {
+            return products;
+        }
+    }
+
+    @Override
     public List<Product> getAllProducts() {
         return productDAO.getAllProducts();
     }

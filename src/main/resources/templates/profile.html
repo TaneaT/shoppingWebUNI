@@ -12,17 +12,23 @@
     }
 
     .example1 {
+      position: fixed;
+      top:0;
       background-color: #BDCFBD;
       background-size: cover;
       padding: 30px;
       background-blend-mode: darken;
-      position: fixed;
       width: 100%;
       z-index: -1;
       margin-left: 100px;
       color: white;
       font-family: bodoni mt white, serif;
       font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .header.hidden {
+      transform: translateY(-100%);
     }
 
     #mySidebar {
@@ -68,9 +74,30 @@
       cursor: pointer;
       transition: background-color 0.3s;
       font-family: bodoni mt white, serif;
+      text-align: center;
     }
 
     .btn:hover {
+      background-color: #BDCFBD;
+      color: white;
+      border: 2px solid #fff;
+    }
+
+    #seeAllButton {
+      display: block;
+      width: 100%;
+      padding: 8px 16px;
+      font-size: 26px;
+      margin: 8px 0;
+      background-color: #9CAA9C;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: bodoni mt white, serif;
+      border: #9CAA9C;
+    }
+
+    #seeAllButton:hover {
       background-color: #BDCFBD;
       color: white;
       border: 2px solid #fff;
@@ -108,6 +135,23 @@
     .update-button:hover {
       background-color: #BDCFBD;
     }
+
+    .data-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .data-table th {
+      background-color: #f2f2f2;
+    }
+
   </style>
   <title></title>
 </head>
@@ -123,11 +167,20 @@
   <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('updateAddress')">Update Address</a>
   <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('updatePassword')">Update Password</a>
   <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleProfileSections('deleteAccount')">Account</a>
-  <a href="javascript:void(0);" class="btn btn-link menu-button" onclick="toggleSellerSections()">Become a Seller</a>
-  <a href="javascript:void(0);" class="btn btn-link menu-button-products" style="display:none;" onclick="toggleProfileSections('addProduct')">Products</a>
-  <a href="javascript:void(0);" class="btn btn-link menu-button-brands" style="display:none;" onclick="toggleProfileSections('addBrand')">Brands</a>
-  <a href="javascript:void(0);" class="btn btn-link menu-button-updateProduct" style="display:none;" onclick="toggleProfileSections('updateProduct')">Update Product</a>
-  <a href="javascript:void(0);" class="btn btn-link menu-button-updateBrand" style="display:none;" onclick="toggleProfileSections('updateBrand')">Update Brand</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-seller" onclick="toggleSellerSections()">Become a Seller</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-products" style="display:none;"
+     onclick="toggleProfileSections('addProduct')">Products</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-brands" style="display:none;"
+     onclick="toggleProfileSections('addBrand')">Brands</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-updateProduct" style="display:none;"
+     onclick="toggleProfileSections('updateProduct')">Update Product</a>
+  <a href="javascript:void(0);" class="btn btn-link menu-button-updateBrand" style="display:none;"
+     onclick="toggleProfileSections('updateBrand')">Update Brand</a>
+  <div id="seller-options" style="display:none;">
+    <a href="javascript:void(0);" class="btn btn-link menu-button-delete-product" onclick="toggleProfileSections('deleteProduct')">Delete Product</a>
+    <a href="javascript:void(0);" class="btn btn-link menu-button-delete-brand" onclick="toggleProfileSections('deleteBrand')">Delete Brand</a>
+  </div>
+  <button class="btn menu-button" id="seeAllButton" onclick="toggleList()">See All</button>
 </div>
 
 <div id="main-content">
@@ -155,11 +208,11 @@
         <input type="hidden" name="userId" th:value="${user.id}" />
         <div class="update-label">Current Address:</div>
         <label>
-          <input type="text" class="update-input" name="currentAddress" required />
+          <input type="text" class="update-input" name="currentAddress" required autocomplete="address-line1" />
         </label>
         <div class="update-label">New Address:</div>
         <label>
-          <input type="text" class="update-input" name="newAddress" required />
+          <input type="text" class="update-input" name="newAddress" required autocomplete="address-line1" />
         </label>
         <button type="submit" class="update-button">Update</button>
       </form>
@@ -173,11 +226,11 @@
         <input type="hidden" name="userId" th:value="${user.id}" />
         <div class="update-label">Old Password:</div>
         <label>
-          <input type="password" class="update-input" name="oldPassword" required />
+          <input type="password" class="update-input" name="oldPassword" required autocomplete="current-password" />
         </label>
         <div class="update-label">New Password:</div>
         <label>
-          <input type="password" class="update-input" name="newPassword" required />
+          <input type="password" class="update-input" name="newPassword" required autocomplete="new-password" />
         </label>
         <button type="submit" class="update-button">Update</button>
       </form>
@@ -188,16 +241,20 @@
     <div class="update-section">
       <h3>Delete Account</h3>
       <form th:action="@{/api/user/profile/delete}" method="post">
-        <input type="hidden" name="userId" th:value="${user.id}" />
+        <div class="update-label">User ID:</div>
+        <label>
+          <input type="text" class="update-input" name="userId" />
+        </label>
         <button type="submit" class="update-button" style="background-color: #FF6F61;">Delete Account</button>
       </form>
     </div>
   </div>
 
+
   <div id="addProductSection" style="display:none;">
     <div class="update-section">
       <h3>Add Product</h3>
-      <form th:action="@{/api/product/create}" method="post">
+      <form th:action="@{/api/product/create}" method="post" enctype="multipart/form-data">
         <div class="update-label">Product Name:</div>
         <label>
           <input type="text" class="update-input" name="name" required />
@@ -218,6 +275,10 @@
         <label>
           <input type="number" class="update-input" name="quantity" required />
         </label>
+        <div class="update-label">Product Image:</div>
+        <label>
+          <input type="file" class="update-input" name="productImage" accept="image/*" />
+        </label>
         <button type="submit" class="update-button">Add Product</button>
       </form>
     </div>
@@ -226,7 +287,7 @@
   <div id="addBrandSection" style="display:none;">
     <div class="update-section">
       <h3>Add Brand</h3>
-      <form th:action="@{/api/brand/create}" method="post">
+      <form th:action="@{/api/brand/create}" method="post" enctype="multipart/form-data">
         <div class="update-label">Brand Name:</div>
         <label>
           <input type="text" class="update-input" name="name" required />
@@ -240,6 +301,32 @@
           <input type="number" class="update-input" name="productId" required />
         </label>
         <button type="submit" class="update-button">Add Brand</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="deleteProductSection" style="display:none;">
+    <div class="update-section">
+      <h3>Delete Product</h3>
+      <form th:action="@{/api/product/delete}" method="post">
+        <div class="update-label">Product ID:</div>
+        <label>
+          <input type="number" class="update-input" name="productId" required />
+        </label>
+        <button type="submit" class="update-button" style="background-color: #FF6F61;">Delete Product</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="deleteBrandSection" style="display:none;">
+    <div class="update-section">
+      <h3>Delete Brand</h3>
+      <form th:action="@{/api/brand/delete}" method="post">
+        <div class="update-label">Brand ID:</div>
+        <label>
+          <input type="number" class="update-input" name="brandId" required />
+        </label>
+        <button type="submit" class="update-button" style="background-color: #FF6F61;">Delete Brand</button>
       </form>
     </div>
   </div>
@@ -278,6 +365,35 @@
     </div>
   </div>
 
+  <div id="listContainer" style="display:none;">
+    <table class="data-table">
+      <thead>
+      <tr>
+        <th>Brand Id</th>
+        <th>Brand name</th>
+        <th>Brand email</th>
+        <th>Product Id</th>
+        <th>Product name</th>
+        <th>Product category</th>
+        <th>Product size</th>
+        <th>Product color</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${brands}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.email}"></td>
+        <td th:text="${item.productId}"></td>
+        <td th:text="${item.productName}"></td>
+        <td th:text="${item.productCategory}"></td>
+        <td th:text="${item.productSize}"></td>
+        <td th:text="${item.productColor}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
   <script>
     function showSuccessMessage(message) {
       const successMessage = document.getElementById("successMessage");
@@ -301,73 +417,123 @@
       errorMessage.style.display = "none";
     }
 
+    function toggleList() {
+      const sections = [
+        "infoSection",
+        "updateAddressSection",
+        "updatePasswordSection",
+        "deleteAccountSection",
+        "addProductSection",
+        "addBrandSection",
+        "updateProductSection",
+        "updateBrandSection",
+        "deleteProductSection",
+        "deleteBrandSection"
+      ];
+
+      sections.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.style.display = "none";
+        }
+      });
+
+      const listContainer = document.getElementById("listContainer");
+      listContainer.style.display = "block";
+    }
+
     function toggleProfileSections(section) {
+      const listContainer = document.getElementById("listContainer");
+      listContainer.style.display = "none";
+
       hideSuccessMessage();
       hideErrorMessage();
 
-      const infoSection = document.getElementById("infoSection");
-      const updateAddressSection = document.getElementById("updateAddressSection");
-      const updatePasswordSection = document.getElementById("updatePasswordSection");
-      const deleteAccountSection = document.getElementById("deleteAccountSection");
-      const addProductSection = document.getElementById("addProductSection");
-      const addBrandSection = document.getElementById("addBrandSection");
-      const updateProductSection = document.getElementById("updateProductSection");
-      const updateBrandSection = document.getElementById("updateBrandSection");
+      const sections = [
+        "infoSection",
+        "updateAddressSection",
+        "updatePasswordSection",
+        "deleteAccountSection",
+        "addProductSection",
+        "addBrandSection",
+        "updateProductSection",
+        "updateBrandSection",
+        "deleteProductSection",
+        "deleteBrandSection"
+      ];
 
-      infoSection.style.display = "none";
-      updateAddressSection.style.display = "none";
-      updatePasswordSection.style.display = "none";
-      deleteAccountSection.style.display = "none";
-      addProductSection.style.display = "none";
-      addBrandSection.style.display = "none";
-      updateProductSection.style.display = "none";
-      updateBrandSection.style.display = "none";
+      sections.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.style.display = "none";
+        }
+      });
 
       if (section === 'updateAddress') {
-        updateAddressSection.style.display = "block";
+        document.getElementById("updateAddressSection").style.display = "block";
       } else if (section === 'updatePassword') {
-        updatePasswordSection.style.display = "block";
+        document.getElementById("updatePasswordSection").style.display = "block";
       } else if (section === 'info') {
-        infoSection.style.display = "block";
+        document.getElementById("infoSection").style.display = "block";
       } else if (section === 'deleteAccount') {
-        deleteAccountSection.style.display = "block";
-      } else if (section === 'becomeSeller') {
-        const productsButton = document.querySelector(".menu-button-products");
-        const brandsButton = document.querySelector(".menu-button-brands");
-        productsButton.style.display = "block";
-        brandsButton.style.display = "block";
-        const updateProductButton = document.querySelector(".menu-button-updateProduct");
-        const updateBrandButton = document.querySelector(".menu-button-updateBrand");
-        updateProductButton.style.display = "block";
-        updateBrandButton.style.display = "block";
+        document.getElementById("deleteAccountSection").style.display = "block";
       } else if (section === 'addProduct') {
-        addProductSection.style.display = "block";
+        document.getElementById("addProductSection").style.display = "block";
       } else if (section === 'addBrand') {
-        addBrandSection.style.display = "block";
+        document.getElementById("addBrandSection").style.display = "block";
       } else if (section === 'updateProduct') {
-        updateProductSection.style.display = "block";
+        document.getElementById("updateProductSection").style.display = "block";
       } else if (section === 'updateBrand') {
-        updateBrandSection.style.display = "block";
+        document.getElementById("updateBrandSection").style.display = "block";
+      } else if (section === 'deleteProduct') {
+        document.getElementById("deleteProductSection").style.display = "block";
+      } else if (section === 'deleteBrand') {
+        document.getElementById("deleteBrandSection").style.display = "block";
       }
     }
+
 
     function toggleSellerSections() {
       const productsButton = document.querySelector(".menu-button-products");
       const brandsButton = document.querySelector(".menu-button-brands");
       const updateProductButton = document.querySelector(".menu-button-updateProduct");
       const updateBrandButton = document.querySelector(".menu-button-updateBrand");
+      const deleteProductButton = document.querySelector(".menu-button-delete-product");
+      const deleteBrandButton = document.querySelector(".menu-button-delete-brand");
 
-      if (productsButton.style.display === "none" && brandsButton.style.display === "none") {
+      if (productsButton.style.display === "none" && brandsButton.style.display === "none"
+              && updateProductButton.style.display === "none" && updateBrandButton.style.display === "none"
+              && deleteProductButton.style.display === "none" && deleteBrandButton.style.display === "none") {
         productsButton.style.display = "block";
         brandsButton.style.display = "block";
         updateProductButton.style.display = "block";
         updateBrandButton.style.display = "block";
+        deleteProductButton.style.display = "block";
+        deleteBrandButton.style.display = "block";
+        document.getElementById("seller-options").style.display = "block";
       } else {
         productsButton.style.display = "none";
         brandsButton.style.display = "none";
         updateProductButton.style.display = "none";
         updateBrandButton.style.display = "none";
+        deleteProductButton.style.display = "none";
+        deleteBrandButton.style.display = "none";
+        document.getElementById("seller-options").style.display = "none";
       }
+    }
+
+
+    let prevScrollPos = window.scrollY;
+    const header = document.querySelector('.example1');
+
+    window.onscroll = function() {
+      const currentScrollPos = window.scrollY;
+      if (prevScrollPos > currentScrollPos) {
+        header.style.transform = "translateY(0)"; // Show header when scrolling up
+      } else {
+        header.style.transform = "translateY(-100%)"; // Hide header when scrolling down
+      }
+      prevScrollPos = currentScrollPos;
     }
   </script>
 

@@ -158,6 +158,42 @@ public class ProductDAOImpl implements ProductDAO {
   }
 
   @Override
+  public List<Product> findByCategory(String category) {
+    String sql = "SELECT * FROM products WHERE products.product_category = ?";
+
+    List<Product> products = new ArrayList<>();
+
+    try (Connection conn = JdbcConnection.getConnection();
+         PreparedStatement findProduct = conn.prepareStatement(sql)) {
+
+      if (category != null) {
+        findProduct.setString(1, category);
+      } else {
+        return null;
+      }
+
+      ResultSet resultSet = findProduct.executeQuery();
+
+      while (resultSet.next()) {
+        Integer Id = resultSet.getInt("product_id");
+        String productName = resultSet.getString("product_name");
+        String productCategory = resultSet.getString("product_category");
+        String size = resultSet.getString("product_size");
+        String color = resultSet.getString("product_color");
+        Integer quantity = resultSet.getInt("product_quantity");
+
+        products.add(new Product(Id, productName, productCategory, size, color, quantity));
+      }
+
+    } catch (SQLException e) {
+      LOGGER.error("Failed to find a product with name : " + category + e);
+    }
+
+    return products;
+  }
+
+
+  @Override
   public List<Product> getAllProducts() {
     String sql = "SELECT * FROM products";
 
