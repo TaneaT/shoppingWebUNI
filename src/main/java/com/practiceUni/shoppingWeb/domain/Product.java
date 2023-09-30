@@ -1,5 +1,6 @@
 package com.practiceUni.shoppingWeb.domain;
 
+import java.sql.Blob;
 import java.util.Objects;
 
 public class Product {
@@ -16,6 +17,7 @@ public class Product {
 
   private Integer quantity;
 
+  private Blob image;
   public Product(
       Integer id, String name, String category, String size, String color, Integer quantity) {
     this.id = id;
@@ -24,6 +26,16 @@ public class Product {
     this.size = size;
     this.color = color;
     this.quantity = quantity;
+  }
+
+  public Product(Integer id, String name, String category, String size, String color, Integer quantity, Blob image) {
+    this.id = id;
+    this.name = name;
+    this.category = category;
+    this.size = size;
+    this.color = color;
+    this.quantity = quantity;
+    this.image = image;
   }
 
   public Product(String name, String category, String size, String color, Integer quantity) {
@@ -82,6 +94,14 @@ public class Product {
 
   public void setQuantity(Integer quantity) {
     this.quantity = quantity;
+  }
+
+  public Blob getImage() {
+    return image;
+  }
+
+  public void setImage(Blob image) {
+    this.image = image;
   }
 
   @Override

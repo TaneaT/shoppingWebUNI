@@ -21,7 +21,7 @@ public class ProductDAOImpl implements ProductDAO {
   @Override
   public Product create(Product product) {
     String sql =
-        "INSERT INTO products(product_name, product_category,product_size, product_color, product_quantity) VALUES (?,?,?,?,?)";
+        "INSERT INTO products(product_name, product_category,product_size, product_color, product_quantity,product_image) VALUES (?,?,?,?,?,?)";
 
     try (Connection conn = JdbcConnection.getConnection();
         PreparedStatement createProduct =
@@ -32,6 +32,7 @@ public class ProductDAOImpl implements ProductDAO {
       createProduct.setString(3, product.getSize());
       createProduct.setString(4, product.getColor());
       createProduct.setInt(5, product.getQuantity());
+      createProduct.setBlob(6, product.getImage());
 
       int insertedRows = createProduct.executeUpdate();
 
