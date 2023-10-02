@@ -80,11 +80,16 @@ public class BrandDAOImpl implements BrandDAO {
   @Override
   public boolean deleteById(Integer id) {
     String sql = "DELETE FROM brands WHERE brand_id = ?";
+    String sql1 = "DELETE FROM brands_product WHERE brand_id = ?";
 
     try (Connection conn = JdbcConnection.getConnection();
-        PreparedStatement deleteBrand = conn.prepareStatement(sql)) {
+        PreparedStatement deleteBrand = conn.prepareStatement(sql);
+    PreparedStatement deleteBrands = conn.prepareStatement(sql1)) {
 
+      deleteBrands.setInt(1,id);
       deleteBrand.setInt(1, id);
+      
+      deleteBrands.executeUpdate();
       deleteBrand.executeUpdate();
 
     } catch (SQLException e) {

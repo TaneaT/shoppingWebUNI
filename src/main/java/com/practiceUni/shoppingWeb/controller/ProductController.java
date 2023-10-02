@@ -5,8 +5,13 @@ import com.practiceUni.shoppingWeb.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -20,7 +25,20 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String addProduct(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+    public String addProduct(@ModelAttribute Product product,
+                             @RequestParam("productImage") MultipartFile productImage,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            if (productImage != null && !productImage.isEmpty()) {
+                byte[] bytes = productImage.getBytes();
+                String imageBase64 = Base64.getEncoder().encodeToString(bytes);
+                product.setImageBase64(imageBase64);
+            }
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to process product image");
+            return "redirect:/api/user/profile";
+        }
+
         Product isProductAdded = productService.createProduct(product);
 
         if(isProductAdded != null) {
@@ -31,6 +49,7 @@ public class ProductController {
 
         return "redirect:/api/user/profile";
     }
+
 
     @PostMapping("/update")
     public String updateProduct(@RequestParam Integer productId, @RequestParam Integer newQuantity, RedirectAttributes redirectAttributes) {
@@ -48,10 +67,18 @@ public class ProductController {
 
 
 
-    @DeleteMapping("/delete/{id}")
-    public boolean deleteProductById(@PathVariable Integer id){
-        return productService.deleteProductById(id);
+    @PostMapping("/delete")
+    public String deleteProduct(@RequestParam("productId") Integer productId, RedirectAttributes redirectAttributes) {
+        boolean isProductDeleted = productService.deleteProductById(productId);
+        if (isProductDeleted) {
+            redirectAttributes.addFlashAttribute("successMessage", "Product deleted successfully");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete product");
+        }
+        return "redirect:/api/user/profile";
     }
+
+
 
     @GetMapping("/find/id/{id}")
     public Product findProductById (@PathVariable Integer id){
@@ -65,24 +92,25 @@ public class ProductController {
 
     @GetMapping("/men")
     public String getMenProducts(Model model) {
-        List<Product> products = productService.findProductByCategory("men");
-        model.addAttribute("products", products);
-        return "main"; // Assuming you have a Thymeleaf template named "product-list.html"
+        List<Product> menProducts = productService.findProductByCategory("men");
+        model.addAttribute("menProducts", menProducts);
+        return "main";
     }
 
     @GetMapping("/women")
     public String getWomenProducts(Model model) {
-        List<Product> products = productService.findProductByCategory("women");
-        model.addAttribute("products", products);
-        return "main"; // Assuming you have a Thymeleaf template named "product-list.html"
+        List<Product> womenProducts = productService.findProductByCategory("women");
+        model.addAttribute("womenProducts", womenProducts);
+        return "main";
     }
 
     @GetMapping("/kids")
     public String getKidsProducts(Model model) {
-        List<Product> products = productService.findProductByCategory("kids");
-        model.addAttribute("products", products);
-        return "main"; // Assuming you have a Thymeleaf template named "product-list.html"
+        List<Product> kidsProducts = productService.findProductByCategory("kids");
+        model.addAttribute("kidsProducts", kidsProducts);
+        return "main";
     }
+
 
 
     @GetMapping("/find/all")

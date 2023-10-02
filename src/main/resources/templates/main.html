@@ -156,8 +156,42 @@
       height: auto;
       display: block; /* Ensure it doesn't have extra spacing */
     }
-    
 
+
+    .data-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .data-table th {
+      background-color: #f2f2f2;
+    }
+    .sidebar .menu-button,
+    .sidebar .category-button {
+      background-color: #9CAA9C;
+      padding: 6px 12px;
+      font-size: 26px;
+      color: white;
+      display: block;
+      transition: 0.3s;
+      border: 2px solid #9CAA9C;
+      margin-left: 42px;
+      font-family:bodoni mt white,serif ;
+    }
+
+    .sidebar .menu-button:hover,
+    .sidebar .category-button:hover {
+      background-color: #BDCFBD;
+      color: white;
+      border: 2px solid #fff;
+    }
   </style>
 </head>
 
@@ -173,9 +207,9 @@
   <a th:href="@{/api/user/profile}" class="btn btn-link menu-button">Profile</a>
   <button class="btn btn-link category-button" onclick="toggleCategories()">Categories</button>
   <div id="categories" style="display:none; padding-left: 20px;">
-    <a th:href="@{/api/products/men}" class="btn btn-link menu-button">Men</a>
-    <a th:href="@{/api/products/women}" class="btn btn-link menu-button">Women</a>
-    <a th:href="@{/api/products/kids}" class="btn btn-link menu-button">Kids</a>
+    <button class="btn btn-link menu-button" onclick="displayProductList('men')">Men</button>
+    <button class="btn btn-link menu-button" onclick="displayProductList('women')">Women</button>
+    <button class="btn btn-link menu-button" onclick="displayProductList('kids')">Kids</button>
   </div>
 
   <!-- Add Log Out and Sign In buttons -->
@@ -187,10 +221,13 @@
   <button class="btn btn-link menu-button rounded" onmouseover="openNav()" style="font-size: 28px; position: absolute; top: 8px; left: -25px; height: 50px; width: 50px; background-color: #9CAA9C; border-color: #9CAA9C; display: flex; justify-content: center; align-items: center;">☰</button>
 
   <div class="top-buttons">
-    <button class="btn btn-link top-button">Men</button>
-    <button class="btn btn-link top-button">Women</button>
-    <button class="btn btn-link top-button">Kids</button>
+    <button class="btn btn-link top-button" onclick="displayProductList('men')">Men</button>
+    <button class="btn btn-link top-button" onclick="displayProductList('women')">Women</button>
+    <button class="btn btn-link top-button" onclick="displayProductList('kids')">Kids</button>
   </div>
+
+
+
 
   <pre></pre>
   <pre></pre>
@@ -212,6 +249,100 @@
   </div>
 </div>
 
+
+<div id="product-list-men" style="display:none; padding-top: 500px;">
+  <table class="data-table">
+    <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Product Name</th>
+      <th>Category</th>
+      <th>Size</th>
+      <th>Color</th>
+      <th>Quantity</th>
+      <th>Image</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${menProducts}">
+      <td th:text="${product.id}"></td>
+      <td th:text="${product.name}"></td>
+      <td th:text="${product.category}"></td>
+      <td th:text="${product.size}"></td>
+      <td th:text="${product.color}"></td>
+      <td th:text="${product.quantity}"></td>
+      <td th:if="${product.imageBase64 != null}">
+        <img th:src="'data:image/png;base64,' + ${product.imageBase64}" style="max-width:100px; max-height:100px;">
+      </td>
+      <td th:if="${product.imageBase64 == null}">No Image</td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="product-list-women" style="display:none; padding-top: 100px;">
+  <table class="data-table">
+    <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Product Name</th>
+      <th>Category</th>
+      <th>Size</th>
+      <th>Color</th>
+      <th>Quantity</th>
+      <th>Image</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${womenProducts}">
+      <td th:text="${product.id}"></td>
+      <td th:text="${product.name}"></td>
+      <td th:text="${product.category}"></td>
+      <td th:text="${product.size}"></td>
+      <td th:text="${product.color}"></td>
+      <td th:text="${product.quantity}"></td>
+      <td th:if="${product.imageBase64 != null}">
+        <img th:src="'data:image/png;base64,' + ${product.imageBase64}" style="max-width:100px; max-height:100px;">
+      </td>
+      <td th:if="${product.imageBase64 == null}">No Image</td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="product-list-kids" style="display:none; padding-top: 50px;">
+  <table class="data-table">
+    <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Product Name</th>
+      <th>Category</th>
+      <th>Size</th>
+      <th>Color</th>
+      <th>Quantity</th>
+      <th>Image</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${kidsProducts}">
+      <td th:text="${product.id}"></td>
+      <td th:text="${product.name}"></td>
+      <td th:text="${product.category}"></td>
+      <td th:text="${product.size}"></td>
+      <td th:text="${product.color}"></td>
+      <td th:text="${product.quantity}"></td>
+      <td th:if="${product.imageBase64 != null}">
+        <img th:src="'data:image/png;base64,' + ${product.imageBase64}" style="max-width:100px; max-height:100px;">
+      </td>
+      <td th:if="${product.imageBase64 == null}">No Image</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
 <script>
   function openNav() {
     document.getElementById("mySidebar").style.width = "250px";
@@ -224,13 +355,29 @@
   }
 
   function toggleCategories() {
-    var categories = document.getElementById("categories");
+    const categories = document.getElementById("categories");
     if (categories.style.display === "none") {
       categories.style.display = "block";
     } else {
       categories.style.display = "none";
     }
   }
+
+  function displayProductList(category) {
+    const sections = [
+      "product-list-men",
+      "product-list-women",
+      "product-list-kids"
+    ];
+
+    sections.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.style.display = id === `product-list-${category}` ? "block" : "none";
+      }
+    });
+  }
+
 </script>
 
 </body>

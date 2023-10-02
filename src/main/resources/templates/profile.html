@@ -241,14 +241,13 @@
     <div class="update-section">
       <h3>Delete Account</h3>
       <form th:action="@{/api/user/profile/delete}" method="post">
-        <div class="update-label">User ID:</div>
-        <label>
-          <input type="text" class="update-input" name="userId" />
-        </label>
+        <!-- Remove the label and input field for User ID -->
+        <input type="hidden" name="userId" th:value="${user.id}" />
         <button type="submit" class="update-button" style="background-color: #FF6F61;">Delete Account</button>
       </form>
     </div>
   </div>
+
 
 
   <div id="addProductSection" style="display:none;">
@@ -308,7 +307,7 @@
   <div id="deleteProductSection" style="display:none;">
     <div class="update-section">
       <h3>Delete Product</h3>
-      <form th:action="@{/api/product/delete}" method="post">
+      <form th:action="@{/api/product/delete}" method='post'>
         <div class="update-label">Product ID:</div>
         <label>
           <input type="number" class="update-input" name="productId" required />

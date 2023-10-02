@@ -1,8 +1,10 @@
 package com.practiceUni.shoppingWeb.controller;
 
 import com.practiceUni.shoppingWeb.domain.Brand;
+import com.practiceUni.shoppingWeb.domain.Product;
 import com.practiceUni.shoppingWeb.domain.User;
 import com.practiceUni.shoppingWeb.service.BrandService;
+import com.practiceUni.shoppingWeb.service.ProductService;
 import com.practiceUni.shoppingWeb.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +24,12 @@ public class UserController {
 
   private final BrandService brandService;
 
-  public UserController(UserService userService, BrandService brandService) {
+  private final ProductService productService;
+
+  public UserController(UserService userService, BrandService brandService, ProductService productService) {
     this.userService = userService;
     this.brandService = brandService;
+    this.productService = productService;
   }
 
   @GetMapping("/main")
@@ -33,23 +38,27 @@ public class UserController {
 
     if (login != null) {
       user = userService.findUserByLogin(login);
-      session.setAttribute("userLogin", login); // Set the user's login as a session attribute
+      session.setAttribute("userLogin", login);
     } else if (principal != null) {
       login = principal.getName();
       user = userService.findUserByLogin(login);
-      session.setAttribute("userLogin", login); // Set the user's login as a session attribute
+      session.setAttribute("userLogin", login);
     } else {
-      // If there's no explicit login parameter and no principal,
-      // check if there's a userLogin attribute in the session
       login = (String) session.getAttribute("userLogin");
       if (login != null) {
         user = userService.findUserByLogin(login);
       }
     }
 
+
     model.addAttribute("user", user);
+    model.addAttribute("menProducts", productService.findProductByCategory("men"));
+    model.addAttribute("womenProducts", productService.findProductByCategory("women"));
+    model.addAttribute("kidsProducts", productService.findProductByCategory("kids"));
+
     return "main";
   }
+
 
 
 

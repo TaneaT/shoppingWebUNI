@@ -51,10 +51,15 @@ public class BrandController {
   }
 
 
-
-  @DeleteMapping("/delete/{id}")
-  public boolean deleteBrandById(@PathVariable Integer id) {
-    return brandService.deleteById(id);
+  @PostMapping("/delete")
+  public String deleteBrand(@RequestParam("brandId") Integer brandId, RedirectAttributes redirectAttributes) {
+    boolean isBrandDeleted = brandService.deleteById(brandId);
+    if (isBrandDeleted) {
+      redirectAttributes.addFlashAttribute("successMessage", "Brand deleted successfully");
+    } else {
+      redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete brand");
+    }
+    return "redirect:/api/user/profile";
   }
 
   @GetMapping("/find/id/{id}")

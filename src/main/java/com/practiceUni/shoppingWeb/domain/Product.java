@@ -18,6 +18,28 @@ public class Product {
   private Integer quantity;
 
   private Blob image;
+
+  private String imageBase64;
+
+  public String getImageBase64() {
+    return imageBase64;
+  }
+
+  public void setImageBase64(String imageBase64) {
+    this.imageBase64 = imageBase64;
+  }
+
+
+  public Product(Integer id, String name, String category, String size, String color, Integer quantity, String imageBase64) {
+    this.id = id;
+    this.name = name;
+    this.category = category;
+    this.size = size;
+    this.color = color;
+    this.quantity = quantity;
+    this.imageBase64 = imageBase64;
+  }
+
   public Product(
       Integer id, String name, String category, String size, String color, Integer quantity) {
     this.id = id;

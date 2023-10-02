@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,36 +21,47 @@ public class ProductDAOImpl implements ProductDAO {
 
   @Override
   public Product create(Product product) {
-    String sql =
-        "INSERT INTO products(product_name, product_category,product_size, product_color, product_quantity,product_image) VALUES (?,?,?,?,?,?)";
+    String sql = "INSERT INTO products(product_name, product_category, product_size, product_color, product_quantity, product_image) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = JdbcConnection.getConnection();
-        PreparedStatement createProduct =
-            conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+         PreparedStatement createProduct = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
       createProduct.setString(1, product.getName());
-      createProduct.setString(2,product.getCategory());
+      createProduct.setString(2, product.getCategory());
       createProduct.setString(3, product.getSize());
       createProduct.setString(4, product.getColor());
       createProduct.setInt(5, product.getQuantity());
-      createProduct.setBlob(6, product.getImage());
+
+      // Convert base64 to Blob
+      if (product.getImageBase64() != null) {
+        byte[] imageBytes = Base64.getDecoder().decode(product.getImageBase64());
+        Blob imageBlob = new javax.sql.rowset.serial.SerialBlob(imageBytes);
+        createProduct.setBlob(6, imageBlob);
+      } else {
+        createProduct.setNull(6, Types.BLOB); // Set as NULL if no image
+      }
 
       int insertedRows = createProduct.executeUpdate();
 
       if (insertedRows > 0) {
-        ResultSet generatedkeys = createProduct.getGeneratedKeys();
+        ResultSet generatedKeys = createProduct.getGeneratedKeys();
 
-        if (generatedkeys.next()) {
-          int generatedId = generatedkeys.getInt(1);
+        if (generatedKeys.next()) {
+          int generatedId = generatedKeys.getInt(1);
           product.setId(generatedId);
+        } else {
+          LOGGER.error("Failed to retrieve generated ID for product");
         }
+      } else {
+        LOGGER.error("Failed to insert product into the database");
       }
     } catch (SQLException e) {
-      LOGGER.error("Failed to create a product " + e);
+      LOGGER.error("Failed to create a product: " + e.getMessage(), e);
     }
 
     return product;
   }
+
 
   @Override
   public Product update(Product product) {
@@ -182,9 +194,20 @@ public class ProductDAOImpl implements ProductDAO {
         String size = resultSet.getString("product_size");
         String color = resultSet.getString("product_color");
         Integer quantity = resultSet.getInt("product_quantity");
+        Blob image = resultSet.getBlob("product_image");
 
-        products.add(new Product(Id, productName, productCategory, size, color, quantity));
+        String imageBase64 = null;
+
+        // Check if the image is not null
+        if (image != null) {
+          // Convert Blob to base64
+          byte[] imageBytes = image.getBytes(1, (int) image.length());
+          imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+        }
+
+        products.add(new Product(Id, productName, productCategory, size, color, quantity, imageBase64));
       }
+
 
     } catch (SQLException e) {
       LOGGER.error("Failed to find a product with name : " + category + e);
@@ -192,7 +215,6 @@ public class ProductDAOImpl implements ProductDAO {
 
     return products;
   }
-
 
   @Override
   public List<Product> getAllProducts() {
@@ -212,8 +234,9 @@ public class ProductDAOImpl implements ProductDAO {
         String size = resultSet.getString("product_size");
         String color = resultSet.getString("product_color");
         Integer quantity = resultSet.getInt("product_quantity");
+        Blob image = resultSet.getBlob("product_image");
 
-        products.add(new Product(Id, productName,category, size, color, quantity));
+        products.add(new Product(Id, productName,category, size, color, quantity,image));
       }
 
     } catch (SQLException e) {
