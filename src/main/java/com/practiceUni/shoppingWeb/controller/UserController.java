@@ -161,6 +161,7 @@ public class UserController {
     return "redirect:/api/user/profile";
   }
 
+
   @PostMapping("/profile/update/password")
   public String updatePassword(@RequestParam("userId") Integer userId, @RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword, RedirectAttributes redirectAttributes) {
     User user = userService.findUserById(userId);

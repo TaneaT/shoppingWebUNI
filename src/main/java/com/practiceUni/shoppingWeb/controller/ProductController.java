@@ -31,8 +31,10 @@ public class ProductController {
         try {
             if (productImage != null && !productImage.isEmpty()) {
                 byte[] bytes = productImage.getBytes();
-                String imageBase64 = Base64.getEncoder().encodeToString(bytes);
-                product.setImageBase64(imageBase64);
+                if (bytes != null) {
+                    String imageBase64 = Base64.getEncoder().encodeToString(bytes);
+                    product.setImageBase64(imageBase64);
+                }
             }
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to process product image");
@@ -49,6 +51,7 @@ public class ProductController {
 
         return "redirect:/api/user/profile";
     }
+
 
 
     @PostMapping("/update")

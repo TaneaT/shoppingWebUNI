@@ -47,7 +47,7 @@ class BrandDAOImplTest {
     @Test
     void shouldCreateBrand() {
 
-        Product product =new Product("name","size","color",1) ;
+        Product product =new Product("Name","category","size", "color",1);
         assertNotNull(productDAO.create(product));
         Brand brand = new Brand("name", "email",product.getId());
         assertNotNull(brandDAO.create(brand));
@@ -61,7 +61,7 @@ class BrandDAOImplTest {
 
     @Test
     void shouldUpdateBrand() {
-        Product product = new Product("name","size","color",1);
+        Product product = new Product("Name","category","size", "color",1);
         assertNotNull(productDAO.create(product));
         Brand brand =  new Brand("name", "email", product.getId());
         assertNotNull(brandDAO.create(brand));
@@ -82,7 +82,7 @@ class BrandDAOImplTest {
 
       @Test
       void shouldCreateBrandIfNotFound(){
-          Product product = new Product("name","size","color",1);
+          Product product = new Product("Name","category","size", "color",1);
           assertNotNull(productDAO.create(product));
           Brand brand =  new Brand("name", "email", product.getId());
           assertNull(brandDAO.findById(brand.getId()));
@@ -99,7 +99,7 @@ class BrandDAOImplTest {
 
     @Test
     void shouldDeleteBrandById() {
-        Product product = new Product("name","size","color",1);
+        Product product = new Product("Name","category","size", "color",1);
         assertNotNull(productDAO.create(product));
         Brand brand =  new Brand("name", "email", product.getId());
         assertNotNull(brandDAO.create(brand));
@@ -111,7 +111,7 @@ class BrandDAOImplTest {
 
     @Test
     void shouldFindBrandById() {
-        Product product = new Product("name","size","color",1);
+        Product product = new Product("Name","category","size", "color",1);
         assertNotNull(productDAO.create(product));
         Brand brand =  new Brand("name", "email", product.getId());
         assertNotNull(brandDAO.create(brand));
@@ -126,7 +126,7 @@ class BrandDAOImplTest {
 
     @Test
     void shouldFindBrandByName() {
-        Product product = new Product("name","size","color",1);
+        Product product = new Product("Name","category","size", "color",1);
         assertNotNull(productDAO.create(product));
         Brand brand =  new Brand("name", "email", product.getId());
         assertNotNull(brandDAO.create(brand));
@@ -140,7 +140,7 @@ class BrandDAOImplTest {
 
     @Test
     void shouldGetAllBrands() {
-        Product product = new Product("name","size","color",1);
+        Product product = new Product("Name","category","size", "color",1);
         assertNotNull(productDAO.create(product));
         Brand brand =  new Brand("name", "email", product.getId());
         assertNotNull(brandDAO.create(brand));

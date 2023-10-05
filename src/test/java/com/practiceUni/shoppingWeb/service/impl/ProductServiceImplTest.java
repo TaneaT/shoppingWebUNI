@@ -29,7 +29,7 @@ class ProductServiceImplTest {
       }
 
       private Product getTestProduct(){
-          return new Product(1,"Name","size","color", 1);
+          return new Product(1,"Name","category","size", "color",1);
       }
 
     @Test
@@ -66,7 +66,7 @@ class ProductServiceImplTest {
 
       @Test
       void shouldCreateProductIfNotFound(){
-        Product product = new Product("Name","size","color", 1);
+        Product product = new Product("Name","category","size", "color",1);
 
         Mockito.lenient().when(productDAOImpl.findById(product.getId())).thenReturn(null);
         assertNull(productServiceImpl.findProductById(product.getId()));
@@ -124,8 +124,8 @@ class ProductServiceImplTest {
 
       @Test
     void shouldGetAllProducts(){
-          Product product1 = new Product(1,"Name", "size", "color", 1);
-          Product product2 = new Product(2,"Name1", "size1", "color1", 2);
+          Product product1 = new Product(1,"Name","category","size", "color",1);
+          Product product2 = new Product(2,"Name","category","size", "color",1);
 
           Mockito.when(productDAOImpl.create(product1)).thenReturn(product1);
           Mockito.when(productDAOImpl.create(product2)).thenReturn(product2);

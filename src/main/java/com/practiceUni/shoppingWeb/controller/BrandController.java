@@ -23,6 +23,8 @@ public class BrandController {
     this.brandService = brandService;
   }
 
+
+
   @PostMapping("/create")
   public String addBrand(@ModelAttribute Brand brand, RedirectAttributes redirectAttributes) {
     Brand isBrandAdded = brandService.create(brand);

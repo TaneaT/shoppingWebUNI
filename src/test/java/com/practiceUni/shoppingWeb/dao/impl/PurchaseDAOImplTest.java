@@ -56,7 +56,7 @@ userPurchase.executeUpdate();
 
   @Test
   void create() {
-    Product product = new Product("name","size","color",1);
+    Product product = new Product("Name","category","size", "color",1);
     User user = new User("fname","lname","ulogin","password","uemail","adress");
 
     assertNotNull(productDAO.create(product));
@@ -81,7 +81,7 @@ userPurchase.executeUpdate();
 
   @Test
   void deleteById() {
-    Product product = new Product("name","size","color",1);
+    Product product = new Product("Name","category","size", "color",1);
     User user = new User("fname","lname","ulogin","password","uemail","adress");
 
     assertNotNull(productDAO.create(product));
@@ -101,7 +101,7 @@ userPurchase.executeUpdate();
 
   @Test
   void findById() {
-    Product product = new Product("name","size","color",1);
+    Product product = new Product("Name","category","size", "color",1);
     User user = new User("fname","lname","ulogin","password","uemail","adress");
 
     assertNotNull(productDAO.create(product));
@@ -126,7 +126,7 @@ userPurchase.executeUpdate();
 
   @Test
   void findAllById() {
-    Product product = new Product("name","size","color",1);
+    Product product = new Product("Name","category","size", "color",1);
     User user = new User("fname","lname","ulogin","password","uemail","adress");
 
     assertNotNull(productDAO.create(product));

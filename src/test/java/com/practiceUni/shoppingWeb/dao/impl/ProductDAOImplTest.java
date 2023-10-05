@@ -22,7 +22,7 @@ class ProductDAOImplTest {
   @Autowired private ProductDAO productDAO;
 
   private Product getTestProduct() {
-    return new Product("Name", "size", "color", 1);
+    return new Product("Name","category","size", "color",1);
   }
 
   @AfterEach
@@ -125,8 +125,8 @@ class ProductDAOImplTest {
 
   @Test
   void shouldGetAllProducts() {
-    Product product1 = new Product("Name", "size", "color", 1);
-    Product product2 = new Product("Name1", "size1", "color1", 2);
+    Product product1 = new Product("Name","category","size", "color",1);
+    Product product2 = new Product("Name","category","size", "color",2);
 
     assertNotNull(productDAO.create(product1));
     assertNotNull(productDAO.create(product2));

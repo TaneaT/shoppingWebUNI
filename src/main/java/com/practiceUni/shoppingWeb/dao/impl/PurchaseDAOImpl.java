@@ -22,8 +22,8 @@ public class PurchaseDAOImpl implements PurchaseDAO {
     String sql = "INSERT INTO purchase(purchase_date,product_id, brand_id) VALUES (?,?,?)";
 
     try (Connection conn = JdbcConnection.getConnection();
-        PreparedStatement createPurchase =
-            conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+         PreparedStatement createPurchase =
+                 conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       createPurchase.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
       createPurchase.setInt(2, purchase.getProductId());
       createPurchase.setInt(3, purchase.getBrandId());
@@ -53,6 +53,7 @@ public class PurchaseDAOImpl implements PurchaseDAO {
 
     return purchase;
   }
+
 
   @Override
   public boolean deleteById(Integer id) {
